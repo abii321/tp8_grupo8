@@ -2,9 +2,9 @@ package ar.edu.unju.escmi.config;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
-public class EmfSingletion {
+public class EmfSingleton {
     private static EmfSingleton miInstancia = new EmfSingleton();
-	private static final String PERSISTENCE_UNIT_NAME = "TestPersistence";
+	private static final String PERSISTENCE_UNIT_NAME = "tp8_grupo8";
 	private EntityManagerFactory emf = null;
 	
 	private EmfSingleton() {
