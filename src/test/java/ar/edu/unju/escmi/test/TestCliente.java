@@ -8,6 +8,7 @@ import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.dao.imp.ClienteDaoImp;
 import ar.edu.unju.escmi.entities.Cliente;
 
+
 class TestCliente {
 
     @Test
