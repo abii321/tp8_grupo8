@@ -7,7 +7,7 @@ import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
 import ar.edu.unju.escmi.entities.Producto;
 
-public class ProductoDAOImp implements IProductoDao {
+public class ProductoDaoImp implements IProductoDao {
 
     private EntityManager em = EmfSingleton.getInstance().createEntityManager();
 
