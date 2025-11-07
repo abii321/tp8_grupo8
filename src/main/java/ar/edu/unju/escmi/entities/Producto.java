@@ -66,6 +66,15 @@ public class Producto {
         this.estado = estado;
     }
 
+    public void setNombre(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public void setPrecio(double precioUnitario) {
+        this.precioUnitario = precioUnitario;
+    }
+
+
     // 🔹 Métodos útiles
     @Override
     public String toString() {

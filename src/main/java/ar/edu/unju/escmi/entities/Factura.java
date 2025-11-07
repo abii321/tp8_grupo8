@@ -45,6 +45,8 @@ public class Factura {
     public List<DetalleFactura> getDetalles() { return detalles; }
     public void setDetalles(List<DetalleFactura> detalles) { this.detalles = detalles; }
 
+    
+
     @Override
     public String toString() {
         return "Factura{" +
@@ -54,4 +56,13 @@ public class Factura {
                 ", cliente=" + (cliente != null ? cliente.getNombre() : "null") +
                 '}';
     }
+
+    public double calcularTotal() {
+    double total = 0.0;
+    for (DetalleFactura detalle : detalles) {
+        total += detalle.getSubtotal(); 
+    }
+    return total;
+}
+
 }

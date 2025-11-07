@@ -9,12 +9,15 @@ import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
 
+import java.util.Scanner;
+
+
 public class FacturaDaoImp implements IFacturaDao {
 
     private EntityManager em;
 
     public FacturaDaoImp() {
-        this.em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        this.em = EmfSingleton.getEntityManager();
     }
 
     @Override
@@ -64,4 +67,68 @@ public class FacturaDaoImp implements IFacturaDao {
         query.setParameter("monto", monto);
         return query.getResultList();
     }
+
+    public void altaFactura(Scanner sc) {
+    Factura factura = new Factura();
+    System.out.print("Ingrese monto: ");
+    double total = factura.calcularTotal();
+    System.out.println("Total de la factura: $" + total);
+
+    EntityManager em = EmfSingleton.getEntityManager();
+    em.getTransaction().begin();
+    em.persist(factura);
+    em.getTransaction().commit();
+    em.close();
+
+    System.out.println("Factura guardada.");
+}
+
+public void buscarFacturaPorId(Scanner sc) {
+    System.out.print("Ingrese ID de factura: ");
+    Long id = Long.parseLong(sc.nextLine());
+
+    EntityManager em = EmfSingleton.getEntityManager();
+    Factura factura = em.find(Factura.class, id);
+    if (factura != null) {
+        System.out.println(factura);
+    } else {
+        System.out.println("Factura no encontrada.");
+    }
+    em.close();
+}
+
+public void eliminarFactura(Scanner sc) {
+    System.out.print("Ingrese ID de factura a eliminar: ");
+    Long id = Long.parseLong(sc.nextLine());
+
+    EntityManager em = EmfSingleton.getEntityManager();
+    Factura factura = em.find(Factura.class, id);
+    if (factura != null) {
+        em.getTransaction().begin();
+        em.remove(factura);
+        em.getTransaction().commit();
+        System.out.println("Factura eliminada.");
+    } else {
+        System.out.println("Factura no encontrada.");
+    }
+    em.close();
+}
+
+public void mostrarFacturas() {
+    EntityManager em = EmfSingleton.getEntityManager();
+    List<Factura> facturas = em.createQuery("FROM Factura", Factura.class).getResultList();
+    facturas.forEach(System.out::println);
+    em.close();
+}
+
+public void mostrarFacturasMayoresA(double monto) {
+    EntityManager em = EmfSingleton.getEntityManager();
+    List<Factura> facturas = em.createQuery(
+        "FROM Factura f WHERE f.monto > :monto", Factura.class)
+        .setParameter("monto", monto)
+        .getResultList();
+    facturas.forEach(System.out::println);
+    em.close();
+}
+
 }
