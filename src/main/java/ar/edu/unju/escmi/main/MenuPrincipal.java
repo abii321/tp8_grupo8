@@ -9,9 +9,7 @@ import ar.edu.unju.escmi.dao.imp.ClienteDaoImp;
 import ar.edu.unju.escmi.dao.imp.DetalleFacturaDaoImp;
 import ar.edu.unju.escmi.dao.imp.FacturaDaoImp;
 import ar.edu.unju.escmi.dao.imp.ProductoDaoImp;
-import ar.edu.unju.escmi.entities.Cliente;
-import ar.edu.unju.escmi.entities.Factura;
-import ar.edu.unju.escmi.entities.Producto;
+
 
 public class MenuPrincipal {
     public static void main(String[] args) {
@@ -49,7 +47,7 @@ public class MenuPrincipal {
                     case 3 -> facturaDao.altaFactura(sc);
                     case 4 -> facturaDao.buscarFacturaPorId(sc);
                     case 5 -> facturaDao.eliminarFactura(sc);
-                    case 6, 9 -> productoDao.eliminarLogicoProducto(sc); // ambas opciones hacen lo mismo
+                    case 6, 9 -> productoDao.eliminarLogicoProducto(sc);
                     case 7 -> clienteDao.modificarCliente(sc);
                     case 8 -> productoDao.modificarPrecio(sc);
                     case 10 -> facturaDao.mostrarFacturas();
@@ -61,13 +59,13 @@ public class MenuPrincipal {
 
             } catch (InputMismatchException e) {
                 System.out.println("Error: Debe ingresar un número válido.");
-                sc.nextLine(); // limpiar buffer
+                sc.nextLine();
             } catch (Exception e) {
                 System.out.println("Ocurrió un error: " + e.getMessage());
             }
         } while (opcion != 0);
 
         sc.close();
-        EmfSingleton.getInstance().close(); // cerrar EntityManagerFactory al final
+        EmfSingleton.close();
     }
 }
