@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.dao.IClienteDao;
-import ar.edu.unju.escmi.dao.imp.FacturaDaoImp;
+import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.dao.imp.ClienteDaoImp;
+import ar.edu.unju.escmi.dao.imp.FacturaDaoImp;
 import ar.edu.unju.escmi.entities.Cliente;
 import ar.edu.unju.escmi.entities.Factura;
 
@@ -21,21 +21,19 @@ class TestFactura {
         IFacturaDao facturaDao = new FacturaDaoImp();
         IClienteDao clienteDao = new ClienteDaoImp();
 
-        // Creamos cliente para asociar
         Cliente cliente = new Cliente();
         cliente.setNombre("Juan");
         cliente.setApellido("Pérez");
         cliente.setDni(11222333);
         cliente.setDomicilio("San Salvador");
         cliente.setEstado(true);
-
         clienteDao.guardarCliente(cliente);
 
-        // Creamos factura
         Factura factura = new Factura();
         factura.setFecha(LocalDate.now());
         factura.setTotal(2500.50);
         factura.setCliente(cliente);
+        factura.setEstado(true);
 
         facturaDao.guardarFactura(factura);
 
@@ -51,25 +49,11 @@ class TestFactura {
         IFacturaDao facturaDao = new FacturaDaoImp();
         IClienteDao clienteDao = new ClienteDaoImp();
 
-        // Cliente base
-        Cliente cliente = new Cliente();
-        cliente.setNombre("Laura");
-        cliente.setApellido("Gómez");
-        cliente.setDni(99887766);
-        cliente.setDomicilio("Jujuy");
-        cliente.setEstado(true);
+        Cliente cliente = new Cliente("Laura", "Gómez", "Jujuy", 99887766, true);
         clienteDao.guardarCliente(cliente);
 
-        // Facturas de prueba
-        Factura f1 = new Factura();
-        f1.setFecha(LocalDate.now());
-        f1.setTotal(1000);
-        f1.setCliente(cliente);
-
-        Factura f2 = new Factura();
-        f2.setFecha(LocalDate.now());
-        f2.setTotal(5000);
-        f2.setCliente(cliente);
+        Factura f1 = new Factura(LocalDate.now(), cliente, "Jujuy", 1000, true);
+        Factura f2 = new Factura(LocalDate.now(), cliente, "Jujuy", 5000, true);
 
         facturaDao.guardarFactura(f1);
         facturaDao.guardarFactura(f2);
@@ -77,5 +61,22 @@ class TestFactura {
         List<Factura> facturas = facturaDao.obtenerFacturasConMontoMayorA(2000);
         assertTrue(facturas.stream().anyMatch(f -> f.getTotal() > 2000),
                 "Debe haber facturas con monto mayor a 2000");
+    }
+
+    @Test
+    void testBorrarFactura() {
+        IFacturaDao facturaDao = new FacturaDaoImp();
+        IClienteDao clienteDao = new ClienteDaoImp();
+
+        Cliente cliente = new Cliente("Mario", "López", "Palpalá", 44332211, true);
+        clienteDao.guardarCliente(cliente);
+
+        Factura factura = new Factura(LocalDate.now(), cliente, "Palpalá", 3000.0, true);
+        facturaDao.guardarFactura(factura);
+
+        facturaDao.borrarFactura(factura);
+
+        Factura facturaEliminada = facturaDao.obtenerFacturaPorId(factura.getId());
+        assertFalse(facturaEliminada.isEstado(), "La factura debería estar marcada como inactiva");
     }
 }

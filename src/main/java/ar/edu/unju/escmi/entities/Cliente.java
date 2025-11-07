@@ -1,11 +1,6 @@
 package ar.edu.unju.escmi.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "clientes")
@@ -30,6 +25,18 @@ public class Cliente {
 
     @Column(name = "estado")
     private boolean estado;
+
+    // Constructor vacío
+    public Cliente() {}
+
+    // Constructor completo
+    public Cliente(String nombre, String apellido, String domicilio, int dni, boolean estado) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.domicilio = domicilio;
+        this.dni = dni;
+        this.estado = estado;
+    }
 
     // Getters & Setters
     public Long getId() { return id; }
