@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.entities;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "clientes")
@@ -8,7 +9,7 @@ public class Cliente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_cliente") 
+    @Column(name = "id_cliente")
     private Long id;
 
     @Column(name = "nombre", nullable = false, length = 50)
@@ -20,16 +21,19 @@ public class Cliente {
     @Column(name = "dni", unique = true, nullable = false)
     private int dni;
 
-    @Column(name = "domicilio")
+    @Column(name = "domicilio", length = 100)
     private String domicilio;
 
     @Column(name = "estado")
     private boolean estado;
 
-    // Constructor vacío
+    // Relación con Factura (un cliente puede tener varias facturas)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Factura> facturas;
+
+    // ===== Constructores =====
     public Cliente() {}
 
-    // Constructor completo
     public Cliente(String nombre, String apellido, String domicilio, int dni, boolean estado) {
         this.nombre = nombre;
         this.apellido = apellido;
@@ -38,7 +42,7 @@ public class Cliente {
         this.estado = estado;
     }
 
-    // Getters & Setters
+    // ===== Getters y Setters =====
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -56,6 +60,9 @@ public class Cliente {
 
     public boolean isEstado() { return estado; }
     public void setEstado(boolean estado) { this.estado = estado; }
+
+    public List<Factura> getFacturas() { return facturas; }
+    public void setFacturas(List<Factura> facturas) { this.facturas = facturas; }
 
     @Override
     public String toString() {
