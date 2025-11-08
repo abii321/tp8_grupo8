@@ -2,6 +2,7 @@ package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
@@ -116,4 +117,28 @@ public class ProductoDaoImp implements IProductoDao {
         }
         return productos;
     }
+
+    public void eliminacionLogica(String descripcion) {
+    EntityManager em = EmfSingleton.getEntityManager();
+    EntityTransaction tx = em.getTransaction();
+    try {
+        tx.begin();
+        TypedQuery<Producto> query = em.createQuery("SELECT p FROM Producto p WHERE p.descripcion = :descripcion", Producto.class);
+        query.setParameter("descripcion", descripcion);
+        Producto producto = query.getSingleResult();
+        if (producto != null) {
+            producto.setEstado(false); 
+            em.merge(producto);
+        }
+        tx.commit();
+    } catch (Exception e) {
+        if (tx.isActive()) {
+            tx.rollback();
+        }
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
+}
+
 }

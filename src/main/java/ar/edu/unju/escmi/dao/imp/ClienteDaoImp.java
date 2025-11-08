@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Scanner;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
@@ -133,4 +134,22 @@ public class ClienteDaoImp implements IClienteDao {
         clientes.forEach(System.out::println);
         em.close();
     }
+
+    public Cliente buscarPorDni(String dni) {
+    EntityManager em = EmfSingleton.getEntityManager();
+    Cliente cliente = null;
+    try {
+        TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni AND c.estado = true", Cliente.class);
+        query.setParameter("dni", dni);
+        cliente = query.getSingleResult();
+    } catch (NoResultException e) {
+        System.out.println("No se encontró un cliente con ese DNI.");
+    } catch (Exception e) {
+        System.out.println("Error al buscar el cliente: " + e.getMessage());
+    } finally {
+        em.close();
+    }
+    return cliente;
+}
+
 }
