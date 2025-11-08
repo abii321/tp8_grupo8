@@ -19,9 +19,11 @@ public class FacturaDaoImp implements IFacturaDao {
             manager.persist(factura);
             manager.getTransaction().commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
-            System.out.println("❌ No se pudo guardar la factura.");
-            e.printStackTrace();
+            if (manager.getTransaction()!=null) manager.getTransaction().rollback();
+            System.out.println("No se pudo guardar la factura.");
+        }
+        finally {
+            manager.close();
         }
     }
 
@@ -33,9 +35,11 @@ public class FacturaDaoImp implements IFacturaDao {
             manager.merge(factura);
             manager.getTransaction().commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
-            System.out.println("❌ No se pudo eliminar la factura.");
-            e.printStackTrace();
+            if (manager.getTransaction()!=null) manager.getTransaction().rollback();
+            System.out.println("No se pudo eliminar la factura.");
+        }
+        finally {
+            manager.close();
         }
     }
 
@@ -47,7 +51,8 @@ public class FacturaDaoImp implements IFacturaDao {
     @Override
     public List<Factura> obtenerFacturas() {
         TypedQuery<Factura> query = manager.createQuery("SELECT f FROM Factura f", Factura.class);
-        return query.getResultList();
+        List<Factura> facturas = query.getResultList();
+		return facturas;
     }
 
     @Override
@@ -56,17 +61,5 @@ public class FacturaDaoImp implements IFacturaDao {
                 "SELECT f FROM Factura f WHERE f.total > :monto", Factura.class);
         query.setParameter("monto", monto);
         return query.getResultList();
-    }
-
-    @Override
-    public void modificarFactura(Factura factura) {
-        try {
-            manager.getTransaction().begin();
-            manager.merge(factura);
-            manager.getTransaction().commit();
-        } catch (Exception e) {
-            if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
-            System.out.println("❌ No se pudo modificar la factura.");
-        }
     }
 }

@@ -9,7 +9,4 @@ public interface IFacturaDao {
     Factura obtenerFacturaPorId(Long idFactura);
     List<Factura> obtenerFacturas();
     List<Factura> obtenerFacturasConMontoMayorA(double monto);
-
-    // 🔽 Agregar esta línea para que el método exista en la interfaz
-    void modificarFactura(Factura factura);
 }

@@ -19,9 +19,11 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
             manager.persist(detalle);
             manager.getTransaction().commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
-            System.out.println("❌ No se pudo guardar el detalle de factura.");
+            if (manager.getTransaction() != null) manager.getTransaction().rollback();
+            System.out.println("No se pudo guardar el detalle de factura.");
             e.printStackTrace();
+        } finally {
+            manager.close();
         }
     }
 
@@ -29,14 +31,6 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
     public List<DetalleFactura> obtenerDetalles() {
         TypedQuery<DetalleFactura> query = manager.createQuery(
                 "SELECT d FROM DetalleFactura d", DetalleFactura.class);
-        return query.getResultList();
-    }
-
-    @Override
-    public List<DetalleFactura> obtenerDetallesPorFactura(Long idFactura) {
-        TypedQuery<DetalleFactura> query = manager.createQuery(
-                "SELECT d FROM DetalleFactura d WHERE d.factura.id = :idFactura", DetalleFactura.class);
-        query.setParameter("idFactura", idFactura);
         return query.getResultList();
     }
 }

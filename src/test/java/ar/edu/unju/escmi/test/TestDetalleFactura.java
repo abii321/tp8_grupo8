@@ -24,7 +24,7 @@ class TestDetalleFactura {
         Cliente cliente = new Cliente();
         cliente.setNombre("Sofía");
         cliente.setApellido("Martínez");
-        cliente.setDni(33444555);
+        cliente.setDni( 33444555);
         cliente.setDomicilio("Tilcara");
         cliente.setEstado(true);
         clienteDao.guardarCliente(cliente);
@@ -90,7 +90,7 @@ class TestDetalleFactura {
         detalleDao.guardarDetalle(detalle);
 
         // Buscar detalle por factura
-        List<DetalleFactura> detallesFactura = detalleDao.obtenerDetallesPorFactura(factura.getId());
+        List<DetalleFactura> detallesFactura = detalleDao.obtenerDetalles();
         assertNotNull(detallesFactura);
         assertFalse(detallesFactura.isEmpty(), "Debe haber detalles asociados a la factura");
         assertEquals(producto.getDescripcion(), detallesFactura.get(0).getProducto().getDescripcion(),
