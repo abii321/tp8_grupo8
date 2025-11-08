@@ -40,4 +40,4 @@ class TestCliente {
         assertNotNull(clientes, "La lista de clientes no debería ser nula");
     }
 }
-//------
+//---
