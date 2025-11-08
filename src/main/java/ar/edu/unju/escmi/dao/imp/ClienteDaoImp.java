@@ -18,6 +18,7 @@ public class ClienteDaoImp implements IClienteDao {
         EntityManager em = EmfSingleton.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
+     
             tx.begin();
             em.persist(cliente);
             tx.commit();
