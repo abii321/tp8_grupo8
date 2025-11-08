@@ -19,7 +19,7 @@ public class InputUtil {
         return aux;
     }
 
-     public static long inputLong(String msg) {
+    public static long inputLong(String msg) {
         long aux = 0; 
         boolean valido = false;
         while (!valido) {
