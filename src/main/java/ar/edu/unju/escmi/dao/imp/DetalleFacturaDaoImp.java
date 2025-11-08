@@ -46,11 +46,4 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
         return query.getResultList();
     }
 
-    @Override
-    public List<DetalleFactura> obtenerDetallesPorFactura(Long idFactura) {
-        TypedQuery<DetalleFactura> query = em.createQuery(
-            "SELECT d FROM DetalleFactura d WHERE d.factura.id = :idFactura", DetalleFactura.class);
-        query.setParameter("idFactura", idFactura);
-        return query.getResultList();
-    }
 }
