@@ -7,6 +7,7 @@ import ar.edu.unju.escmi.entities.Cliente;
 import ar.edu.unju.escmi.entities.Producto;
 import ar.edu.unju.escmi.entities.Factura;
 import ar.edu.unju.escmi.utils.InputUtil;
+import ar.edu.unju.escmi.entities.DetalleFactura;
 
 import java.util.List;
 
@@ -66,19 +67,45 @@ public class MenuPrincipal {
                         System.out.println("Producto guardado exitosamente.");
                         break;
 
-                    case 3:
-                        String dniFactura = InputUtil.inputString("Ingrese DNI del cliente:");
-                        Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
-                        if (clienteFactura == null) {
-                            throw new Exception("Cliente no encontrado.");
+                    case 3: {
+                    String dniFactura = InputUtil.inputString("Ingrese DNI del cliente:");
+                    Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
+                    if (clienteFactura == null) {
+                        System.out.println("Cliente no encontrado.");
+                        break;
                         }
 
-                        Factura nuevaFactura = new Factura();
-                        nuevaFactura.setCliente(clienteFactura);
-                        nuevaFactura.setTotal(InputUtil.inputDouble("Ingrese total de la factura:"));
-                        facturaDao.guardarFactura(nuevaFactura);
-                        System.out.println("Factura registrada exitosamente.");
-                        break;
+                    Factura factura = new Factura();
+                    factura.setCliente(clienteFactura);
+
+                String respuesta = "";
+                do { 
+                    Long idProd = InputUtil.inputLong("Ingrese ID del producto:");
+                    Producto producto = productoDao.buscarPorId(idProd);
+
+                    if (producto == null || !producto.isEstado()) {
+                        System.out.println("El producto no existe o está inactivo.");
+                        continue;
+                }
+
+                    int cantidad = InputUtil.inputInt("Ingrese cantidad:");
+                    factura.agregarDetalle(producto, cantidad);
+
+                    respuesta = InputUtil.inputString("¿Desea agregar otro producto? (si/no):");
+                } while (respuesta.equalsIgnoreCase("si"));
+
+
+                    if (factura.getDetalles() != null && !factura.getDetalles().isEmpty()) {
+                        factura.calcularTotal(); 
+                        facturaDao.guardarFactura(factura);
+                        System.out.println("✅ Factura registrada exitosamente.");
+                    } else {
+                        System.out.println("⚠️ Compra no realizada.");
+                    }
+
+                    break;
+                }
+
 
                     case 4:
                         int numeroFactura = InputUtil.inputInt("Ingrese número de factura a buscar:");
