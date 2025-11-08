@@ -1,7 +1,6 @@
 package ar.edu.unju.escmi.dao;
 
 import ar.edu.unju.escmi.entities.Producto;
-import java.util.List;
 
 public interface IProductoDao {
     void guardarProducto(Producto producto);
@@ -9,5 +8,4 @@ public interface IProductoDao {
     void modificarPrecio(Long idProd, double nuevoPrecio);
     double obtenerPrecioPorId(Long idProd);
     Producto buscarPorId(Long id);
-    List<Producto> obtenerTodos();
 }
