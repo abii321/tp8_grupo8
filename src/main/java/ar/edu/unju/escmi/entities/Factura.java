@@ -87,8 +87,7 @@ public class Factura {
     }
 
     public void agregarDetalle(Producto producto, int cantidad) {
-    DetalleFactura detalle = new DetalleFactura(this, producto, cantidad);
-    this.detalles.add(detalle);
-}
-
+        DetalleFactura detalle = new DetalleFactura(this, producto, cantidad);
+        this.detalles.add(detalle);
+    }
 }
