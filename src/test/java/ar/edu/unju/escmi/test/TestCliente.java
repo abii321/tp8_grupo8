@@ -15,7 +15,6 @@ class TestCliente {
     void testGuardarCliente() {
         Cliente cliente = new Cliente("Luján", "Cansino", "San Salvador", 48678917, true);
         dao.guardarCliente(cliente);
-
         assertNotNull(cliente.getId(), "El ID no debería ser nulo después de guardar");
     }
 
@@ -23,10 +22,8 @@ class TestCliente {
     void testModificarCliente() {
         Cliente cliente = new Cliente("Ana", "Gómez", "Jujuy", 12345678, true);
         dao.guardarCliente(cliente);
-
         cliente.setNombre("Ana María");
         dao.modificarCliente(cliente);
-
         assertEquals("Ana María", cliente.getNombre(), "El nombre debería haberse modificado");
     }
 
