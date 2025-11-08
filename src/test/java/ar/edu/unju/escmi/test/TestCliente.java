@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import ar.edu.unju.escmi.dao.IClienteDao;
@@ -15,20 +16,27 @@ class TestCliente {
     void testGuardarCliente() {
         Cliente cliente = new Cliente("Luján", "Cansino", "San Salvador", 48678917, true);
         dao.guardarCliente(cliente);
-        assertNotNull(cliente.getId(), "El ID no debería ser nulo después de guardar");
+
+        Cliente clienteGuardado = dao.buscarPorDni(48678917); // buscar después de guardar
+        assertNotNull(clienteGuardado.getId(), "El ID no debería ser nulo después de guardar");
     }
 
     @Test
     void testModificarCliente() {
         Cliente cliente = new Cliente("Ana", "Gómez", "Jujuy", 12345678, true);
         dao.guardarCliente(cliente);
-        cliente.setNombre("Ana María");
-        dao.modificarCliente(cliente);
-        assertEquals("Ana María", cliente.getNombre(), "El nombre debería haberse modificado");
+
+        Cliente clienteGuardado = dao.buscarPorDni(12345678); // 🔹 buscar con ID actualizado
+        clienteGuardado.setNombre("Ana María");
+        dao.modificarCliente(clienteGuardado);
+
+        Cliente clienteModificado = dao.buscarPorDni(12345678);
+        assertEquals("Ana María", clienteModificado.getNombre(), "El nombre debería haberse modificado");
     }
 
     @Test
     void testObtenerClientes() {
-        assertNotNull(dao.obtenerClientes(), "La lista de clientes no debería ser nula");
+        List<Cliente> clientes = dao.obtenerClientes();
+        assertNotNull(clientes, "La lista de clientes no debería ser nula");
     }
 }

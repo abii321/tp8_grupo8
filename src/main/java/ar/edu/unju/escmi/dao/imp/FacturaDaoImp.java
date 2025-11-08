@@ -1,65 +1,72 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 
 public class FacturaDaoImp implements IFacturaDao {
 
-    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-
     @Override
     public void guardarFactura(Factura factura) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            manager.getTransaction().begin();
-            manager.persist(factura);
-            manager.getTransaction().commit();
+            tx.begin();
+            em.persist(factura);
+            tx.commit();
         } catch (Exception e) {
-            if (manager.getTransaction()!=null) manager.getTransaction().rollback();
+            if (tx.isActive()) tx.rollback();
             System.out.println("No se pudo guardar la factura.");
-        }
-        finally {
-            manager.close();
+        } finally {
+            em.close();
         }
     }
 
     @Override
     public void borrarFactura(Factura factura) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            manager.getTransaction().begin();
-            factura.setEstado(false); // eliminación lógica
-            manager.merge(factura);
-            manager.getTransaction().commit();
+            tx.begin();
+            factura.setEstado(false);
+            em.merge(factura);
+            tx.commit();
         } catch (Exception e) {
-            if (manager.getTransaction()!=null) manager.getTransaction().rollback();
+            if (tx.isActive()) tx.rollback();
             System.out.println("No se pudo eliminar la factura.");
-        }
-        finally {
-            manager.close();
+        } finally {
+            em.close();
         }
     }
 
     @Override
     public Factura obtenerFacturaPorId(Long idFactura) {
-        return manager.find(Factura.class, idFactura);
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        Factura factura = em.find(Factura.class, idFactura);
+        em.close();
+        return factura;
     }
 
     @Override
     public List<Factura> obtenerFacturas() {
-        TypedQuery<Factura> query = manager.createQuery("SELECT f FROM Factura f", Factura.class);
-        List<Factura> facturas = query.getResultList();
-		return facturas;
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        List<Factura> facturas = em.createQuery("SELECT f FROM Factura f", Factura.class).getResultList();
+        em.close();
+        return facturas;
     }
 
     @Override
     public List<Factura> obtenerFacturasConMontoMayorA(double monto) {
-        TypedQuery<Factura> query = manager.createQuery(
-                "SELECT f FROM Factura f WHERE f.total > :monto", Factura.class);
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+        TypedQuery<Factura> query = em.createQuery("SELECT f FROM Factura f WHERE f.total > :monto", Factura.class);
         query.setParameter("monto", monto);
-        return query.getResultList();
+        List<Factura> facturas = query.getResultList();
+        em.close();
+        return facturas;
     }
 }
