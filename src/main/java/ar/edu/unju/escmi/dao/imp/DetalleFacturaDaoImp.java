@@ -22,21 +22,41 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
             if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
             System.out.println("❌ No se pudo guardar el detalle de factura.");
             e.printStackTrace();
+        } finally {
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
         }
     }
 
     @Override
     public List<DetalleFactura> obtenerDetalles() {
-        TypedQuery<DetalleFactura> query = manager.createQuery(
-                "SELECT d FROM DetalleFactura d", DetalleFactura.class);
-        return query.getResultList();
+        try {
+            TypedQuery<DetalleFactura> query =
+                manager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener los detalles de factura.");
+            e.printStackTrace();
+            return null;
+        } finally {
+            // No se cierra el manager porque es estático
+        }
     }
 
     @Override
     public List<DetalleFactura> obtenerDetallesPorFactura(Long idFactura) {
-        TypedQuery<DetalleFactura> query = manager.createQuery(
+        try {
+            TypedQuery<DetalleFactura> query = manager.createQuery(
                 "SELECT d FROM DetalleFactura d WHERE d.factura.id = :idFactura", DetalleFactura.class);
-        query.setParameter("idFactura", idFactura);
-        return query.getResultList();
+            query.setParameter("idFactura", idFactura);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener detalles por factura.");
+            e.printStackTrace();
+            return null;
+        } finally {
+            // No cerrar el manager
+        }
     }
 }

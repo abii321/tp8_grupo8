@@ -22,6 +22,10 @@ public class FacturaDaoImp implements IFacturaDao {
             if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
             System.out.println("❌ No se pudo guardar la factura.");
             e.printStackTrace();
+        } finally {
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
         }
     }
 
@@ -36,26 +40,54 @@ public class FacturaDaoImp implements IFacturaDao {
             if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
             System.out.println("❌ No se pudo eliminar la factura.");
             e.printStackTrace();
+        } finally {
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
         }
     }
 
     @Override
     public Factura obtenerFacturaPorId(Long idFactura) {
-        return manager.find(Factura.class, idFactura);
+        try {
+            return manager.find(Factura.class, idFactura);
+        } catch (Exception e) {
+            System.out.println("❌ Error al buscar factura por ID.");
+            e.printStackTrace();
+            return null;
+        } finally {
+            // No se cierra el EntityManager porque es estático
+        }
     }
 
     @Override
     public List<Factura> obtenerFacturas() {
-        TypedQuery<Factura> query = manager.createQuery("SELECT f FROM Factura f", Factura.class);
-        return query.getResultList();
+        try {
+            TypedQuery<Factura> query = manager.createQuery("SELECT f FROM Factura f", Factura.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener las facturas.");
+            e.printStackTrace();
+            return null;
+        } finally {
+            // No cerrar el manager
+        }
     }
 
     @Override
     public List<Factura> obtenerFacturasConMontoMayorA(double monto) {
-        TypedQuery<Factura> query = manager.createQuery(
+        try {
+            TypedQuery<Factura> query = manager.createQuery(
                 "SELECT f FROM Factura f WHERE f.total > :monto", Factura.class);
-        query.setParameter("monto", monto);
-        return query.getResultList();
+            query.setParameter("monto", monto);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println("❌ Error al obtener facturas con monto mayor a " + monto);
+            e.printStackTrace();
+            return null;
+        } finally {
+            // No cerrar el manager
+        }
     }
 
     @Override
@@ -67,6 +99,11 @@ public class FacturaDaoImp implements IFacturaDao {
         } catch (Exception e) {
             if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
             System.out.println("❌ No se pudo modificar la factura.");
+            e.printStackTrace();
+        } finally {
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
         }
     }
 }
