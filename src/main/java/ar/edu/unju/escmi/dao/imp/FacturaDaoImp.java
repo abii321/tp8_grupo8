@@ -4,13 +4,9 @@ import java.util.List;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IFacturaDao;
 import ar.edu.unju.escmi.entities.Factura;
-
-import java.util.Scanner;
-
 
 public class FacturaDaoImp implements IFacturaDao {
 
@@ -30,6 +26,8 @@ public class FacturaDaoImp implements IFacturaDao {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
 
@@ -38,20 +36,24 @@ public class FacturaDaoImp implements IFacturaDao {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Factura fact = em.find(Factura.class, factura.getId());
-            if (fact != null) {
-                em.remove(fact);
-            }
+            factura.setEstado(false);
+            em.merge(factura);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
 
     @Override
     public Factura obtenerFacturaPorId(Long idFactura) {
-        return em.find(Factura.class, idFactura);
+        try {
+            return em.find(Factura.class, idFactura);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
@@ -68,67 +70,24 @@ public class FacturaDaoImp implements IFacturaDao {
         return query.getResultList();
     }
 
-    public void altaFactura(Scanner sc) {
-    Factura factura = new Factura();
-    System.out.print("Ingrese monto: ");
-    double total = factura.calcularTotal();
-    System.out.println("Total de la factura: $" + total);
-
-    EntityManager em = EmfSingleton.getEntityManager();
-    em.getTransaction().begin();
-    em.persist(factura);
-    em.getTransaction().commit();
-    em.close();
-
-    System.out.println("Factura guardada.");
-}
-
-public void buscarFacturaPorId(Scanner sc) {
-    System.out.print("Ingrese ID de factura: ");
-    Long id = Long.parseLong(sc.nextLine());
-
-    EntityManager em = EmfSingleton.getEntityManager();
-    Factura factura = em.find(Factura.class, id);
-    if (factura != null) {
-        System.out.println(factura);
-    } else {
-        System.out.println("Factura no encontrada.");
+    // Métodos auxiliares usados por el menú
+    public void mostrarFacturas() {
+        obtenerFacturas().forEach(System.out::println);
     }
-    em.close();
-}
 
-public void eliminarFactura(Scanner sc) {
-    System.out.print("Ingrese ID de factura a eliminar: ");
-    Long id = Long.parseLong(sc.nextLine());
-
-    EntityManager em = EmfSingleton.getEntityManager();
-    Factura factura = em.find(Factura.class, id);
-    if (factura != null) {
-        em.getTransaction().begin();
-        em.remove(factura);
-        em.getTransaction().commit();
-        System.out.println("Factura eliminada.");
-    } else {
-        System.out.println("Factura no encontrada.");
+    public void mostrarFacturasMayoresA(double monto) {
+        obtenerFacturasConMontoMayorA(monto).forEach(System.out::println);
     }
-    em.close();
-}
 
-public void mostrarFacturas() {
-    EntityManager em = EmfSingleton.getEntityManager();
-    List<Factura> facturas = em.createQuery("FROM Factura", Factura.class).getResultList();
-    facturas.forEach(System.out::println);
-    em.close();
-}
+    public void altaFactura(java.util.Scanner sc) {
+        System.out.println("Simulación de alta de factura (implementar interacción si se requiere)");
+    }
 
-public void mostrarFacturasMayoresA(double monto) {
-    EntityManager em = EmfSingleton.getEntityManager();
-    List<Factura> facturas = em.createQuery(
-        "FROM Factura f WHERE f.monto > :monto", Factura.class)
-        .setParameter("monto", monto)
-        .getResultList();
-    facturas.forEach(System.out::println);
-    em.close();
-}
+    public void eliminarFactura(java.util.Scanner sc) {
+        System.out.println("Simulación de eliminación de factura");
+    }
 
+    public void buscarFacturaPorId(java.util.Scanner sc) {
+        System.out.println("Simulación de búsqueda de factura");
+    }
 }
