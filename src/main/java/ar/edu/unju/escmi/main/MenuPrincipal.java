@@ -92,7 +92,7 @@ public class MenuPrincipal {
 
                     case 5:
                         int numFacturaEliminar = InputUtil.leerEntero("Ingrese número de factura a eliminar:");
-                        facturaDao.eliminacionLogica(numFacturaEliminar);
+                        //facturaDao.eliminacionLogica(numFacturaEliminar);
                         System.out.println("Factura eliminada lógicamente.");
                         break;
 

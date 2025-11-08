@@ -79,36 +79,4 @@ public class FacturaDaoImp implements IFacturaDao {
         obtenerFacturasConMontoMayorA(monto).forEach(System.out::println);
     }
 
-    public void altaFactura(java.util.Scanner sc) {
-        System.out.println("Simulación de alta de factura (implementar interacción si se requiere)");
-    }
-
-    public void eliminarFactura(java.util.Scanner sc) {
-        System.out.println("Simulación de eliminación de factura");
-    }
-
-    public void buscarFacturaPorId(java.util.Scanner sc) {
-        System.out.println("Simulación de búsqueda de factura");
-    }
-
-    public void eliminacionLogica(int numeroFactura) {
-    EntityManager em = EmfSingleton.getEntityManager();
-    EntityTransaction tx = em.getTransaction();
-    try {
-        tx.begin();
-        Factura factura = em.find(Factura.class, numeroFactura);
-        if (factura != null) {
-            factura.setEstado(false);
-            em.merge(factura);
-        }
-        tx.commit();
-    } catch (Exception e) {
-        if (tx.isActive()) {
-            tx.rollback();
-        }
-        e.printStackTrace();
-    } finally {
-        em.close();
-    }
-    }
 }
