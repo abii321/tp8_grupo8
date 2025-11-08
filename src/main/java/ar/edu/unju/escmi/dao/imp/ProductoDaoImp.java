@@ -141,4 +141,17 @@ public class ProductoDaoImp implements IProductoDao {
     }
 }
 
+    public boolean existeDescripcion(String descripcion) {
+        EntityManager em = EmfSingleton.getEntityManager();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(p) FROM Producto p WHERE p.descripcion = :descripcion AND p.estado = true",
+                    Long.class)
+                    .setParameter("descripcion", descripcion)
+                    .getSingleResult();
+            return count > 0;
+        } finally {
+            em.close();
+        }
+    }
 }
