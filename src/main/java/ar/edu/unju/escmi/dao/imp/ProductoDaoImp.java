@@ -1,16 +1,15 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import jakarta.persistence.EntityManager;
-import java.util.List;
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
 import ar.edu.unju.escmi.entities.Producto;
 
 public class ProductoDaoImp implements IProductoDao {
-    private static EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
     
     @Override
     public void guardarProducto(Producto producto) {    
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             em.persist(producto);
@@ -26,6 +25,7 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public void borrarProducto(Producto producto) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             Producto prod = em.find(Producto.class, producto.getId());
@@ -45,6 +45,7 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public double obtenerPrecioPorId(Long idProd) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         double precio = 0;
         try {
             Producto producto = em.find(Producto.class, idProd);
@@ -61,6 +62,7 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public void modificarPrecio(Long idProd, double nuevoPrecio) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             Producto producto = em.find(Producto.class, idProd);
@@ -82,6 +84,7 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public Producto buscarPorId(Long id) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         Producto producto = null;
         try {
             producto = em.find(Producto.class, id);
@@ -93,24 +96,5 @@ public class ProductoDaoImp implements IProductoDao {
         return producto;
     }
     
-    /*public boolean existeDescripcion(String descripcion) {
-        EntityManager em =EmfSingleton.getInstance().getEmf().createEntityManager();
-        try {
-            List<Producto> productos = em.createQuery("SELECT p FROM Producto p WHERE p.estado = true", Producto.class)
-                .getResultList();
-
-            for (Producto p : productos) {
-                if (p.getDescripcion().equalsIgnoreCase(descripcion)) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (Exception e) {
-            System.out.println("Error al verificar la descripción: " + e.getMessage());
-            return false;
-        } finally {
-        em.close();
-    }
-    }*/
 
 }

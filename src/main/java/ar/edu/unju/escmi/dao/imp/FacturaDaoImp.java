@@ -10,10 +10,9 @@ import jakarta.persistence.TypedQuery;
 
 public class FacturaDaoImp implements IFacturaDao {
 
-    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-
     @Override
     public void guardarFactura(Factura factura) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             manager.getTransaction().begin();
             manager.persist(factura);
@@ -29,6 +28,7 @@ public class FacturaDaoImp implements IFacturaDao {
 
     @Override
     public void borrarFactura(Factura factura) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             manager.getTransaction().begin();
             factura.setEstado(false); // eliminación lógica
@@ -45,11 +45,13 @@ public class FacturaDaoImp implements IFacturaDao {
 
     @Override
     public Factura obtenerFacturaPorId(Long idFactura) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         return manager.find(Factura.class, idFactura);
     }
 
     @Override
     public List<Factura> obtenerFacturas() {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         TypedQuery<Factura> query = manager.createQuery("SELECT f FROM Factura f", Factura.class);
         List<Factura> facturas = query.getResultList();
 		return facturas;
@@ -57,6 +59,7 @@ public class FacturaDaoImp implements IFacturaDao {
 
     @Override
     public List<Factura> obtenerFacturasConMontoMayorA(double monto) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         TypedQuery<Factura> query = manager.createQuery(
                 "SELECT f FROM Factura f WHERE f.total > :monto", Factura.class);
         query.setParameter("monto", monto);
