@@ -13,7 +13,7 @@ public class FacturaDaoImp implements IFacturaDao {
     private EntityManager em;
 
     public FacturaDaoImp() {
-        this.em = EmfSingleton.getEntityManager();
+        this.em = EmfSingleton.getInstance().getEmf().createEntityManager();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class FacturaDaoImp implements IFacturaDao {
     }
 
     public void eliminacionLogica(int numeroFactura) {
-    EntityManager em = EmfSingleton.getEntityManager();
+    EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
     EntityTransaction tx = em.getTransaction();
     try {
         tx.begin();

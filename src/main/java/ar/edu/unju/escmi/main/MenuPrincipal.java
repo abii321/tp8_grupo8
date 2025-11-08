@@ -91,17 +91,29 @@ public class MenuPrincipal {
                         break;
 
                     case 5:
-                        int numFacturaEliminar = InputUtil.leerEntero("Ingrese número de factura a eliminar:");
-                        facturaDao.eliminacionLogica(numFacturaEliminar);
+                    int numFacturaEliminar = InputUtil.leerEntero("Ingrese número de factura a eliminar:");
+                    Factura facturaEliminar = facturaDao.obtenerFacturaPorId((long) numFacturaEliminar);
+
+                    if (facturaEliminar != null && facturaEliminar.isEstado()) {
+                        facturaDao.borrarFactura(facturaEliminar);
                         System.out.println("Factura eliminada lógicamente.");
-                        break;
+                    } else {
+                        System.out.println("Factura no encontrada o ya está inactiva.");
+                    }
+                    break;
 
                     case 6:
                     case 9:
-                        String descProdEliminar = InputUtil.leerTexto("Ingrese descripción del producto a eliminar:");
-                        productoDao.eliminacionLogica(descProdEliminar);
-                        System.out.println("Producto eliminado lógicamente.");
-                        break;
+                        Long idProdEliminar = InputUtil.leerLong("Ingrese ID del producto a eliminar:");
+                        Producto productoAEliminar = productoDao.buscarPorId(idProdEliminar);
+
+                        if (productoAEliminar != null && productoAEliminar.isEstado()) {
+                            productoDao.borrarProducto(productoAEliminar);
+                        } else {
+                            System.out.println("Producto no encontrado o ya está inactivo.");
+                        }
+                    break;
+
 
                     case 7:
                         String dniModificar = InputUtil.leerTexto("Ingrese DNI del cliente a modificar:");
@@ -153,7 +165,7 @@ public class MenuPrincipal {
                 }
 
             } catch (Exception e) {
-                System.out.println("⚠️ Error: " + e.getMessage());
+                System.out.println("Error: " + e.getMessage());
             }
 
         } while (opcion != 0);

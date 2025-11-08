@@ -13,7 +13,7 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
     private EntityManager em;
 
     public DetalleFacturaDaoImp() {
-        this.em = EmfSingleton.getEntityManager();
+        this.em =EmfSingleton.getInstance().getEmf().createEntityManager();
     }
 
     @Override
