@@ -41,23 +41,8 @@ public class InputUtil {
         return sc.nextLine();
     }
 
-    public static String leerTexto(String mensaje) {
-        System.out.print(mensaje);
-        return sc.nextLine();
-    }
 
-    public static int leerEntero(String mensaje) {
-        System.out.print(mensaje);
-        while (!sc.hasNextInt()) {
-            System.out.print("Error. Ingrese un número entero: ");
-            sc.next(); // descarta lo que no es un entero
-        }
-        int valor = sc.nextInt();
-        sc.nextLine();
-        return valor;
-    }
-
-    public static double leerDouble(String mensaje) {
+    public static double inputDouble(String mensaje) {
         System.out.print(mensaje);
         while (!sc.hasNextDouble()) {
             System.out.print("Error. Ingrese un número decimal: ");
@@ -67,16 +52,5 @@ public class InputUtil {
         sc.nextLine();
         return valor;
     }
-
-    public static Long leerLong(String mensaje) {
-    while (true) {
-        try {
-            System.out.print(mensaje);
-            return Long.parseLong(sc.nextLine());
-        } catch (NumberFormatException e) {
-            System.out.println("Entrada inválida. Ingrese un número largo (long).");
-        }
-    }
-}
 
 }
