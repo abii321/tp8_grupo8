@@ -9,10 +9,10 @@ import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.entities.Cliente;
 
 public class ClienteDaoImp implements IClienteDao {
-    private static EntityManager manager =  EmfSingleton.getInstance().getEmf().createEntityManager();
 
 	@Override
 	public void guardarCliente(Cliente cliente) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 		try {
 			manager.getTransaction().begin();
 			manager.persist(cliente);
@@ -29,6 +29,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public void modificarCliente(Cliente cliente) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
 			manager.getTransaction().begin();
 			manager.merge(cliente);
@@ -45,6 +46,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public List<Cliente> obtenerClientes() {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         TypedQuery<Cliente> query = (TypedQuery<Cliente>) manager.createQuery("select * from Autor a", Cliente.class);
 		List<Cliente> clientes = query.getResultList();
         return clientes;
@@ -52,6 +54,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public Cliente buscarPorDni(int dni) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         return manager.find(Cliente.class, dni);
     }
 
