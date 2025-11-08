@@ -1,21 +1,25 @@
 package ar.edu.unju.escmi.config;
 
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class EmfSingleton {
 
-    private static final EntityManagerFactory emf = 
-        Persistence.createEntityManagerFactory("tp8_grupo8");
+	private static EmfSingleton miInstancia = new EmfSingleton();
+	private static final String PERSISTENCE_UNIT_NAME = "tp8_grupo8";
+	private EntityManagerFactory emf = null;
+	
+	private EmfSingleton() {		
+	}
+	
+	public static EmfSingleton getInstance() {
+		return miInstancia;
+	}
+	
+	public EntityManagerFactory getEmf() {
+		if(this.emf == null) 
+			this.emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
+		return this.emf;
+	}
 
-    public static EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
-
-    public static void close() {
-        if (emf != null && emf.isOpen()) {
-            emf.close();
-        }
-    }
 }

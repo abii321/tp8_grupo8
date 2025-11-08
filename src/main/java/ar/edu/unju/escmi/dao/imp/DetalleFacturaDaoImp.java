@@ -1,39 +1,36 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.TypedQuery;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IDetalleFacturaDao;
 import ar.edu.unju.escmi.entities.DetalleFactura;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
 
-    private EntityManager em;
-
-    public DetalleFacturaDaoImp() {
-        this.em = EmfSingleton.getEntityManager();
-    }
+    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
     @Override
     public void guardarDetalle(DetalleFactura detalle) {
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
-            em.persist(detalle);
-            tx.commit();
+            manager.getTransaction().begin();
+            manager.persist(detalle);
+            manager.getTransaction().commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
+            if (manager.getTransaction() != null) manager.getTransaction().rollback();
+            System.out.println("No se pudo guardar el detalle de factura.");
             e.printStackTrace();
+        } finally {
+            manager.close();
         }
     }
 
     @Override
     public List<DetalleFactura> obtenerDetalles() {
-        TypedQuery<DetalleFactura> query = em.createQuery(
-            "SELECT d FROM DetalleFactura d", DetalleFactura.class);
+        TypedQuery<DetalleFactura> query = manager.createQuery(
+                "SELECT d FROM DetalleFactura d", DetalleFactura.class);
         return query.getResultList();
     }
 }

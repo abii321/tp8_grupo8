@@ -19,7 +19,7 @@ public class InputUtil {
         return aux;
     }
 
-     public static long inputLong(String msg) {
+    public static long inputLong(String msg) {
         long aux = 0; 
         boolean valido = false;
         while (!valido) {
@@ -40,4 +40,17 @@ public class InputUtil {
         sc.nextLine(); // limpiar buffer
         return sc.nextLine();
     }
+
+
+    public static double inputDouble(String mensaje) {
+        System.out.print(mensaje);
+        while (!sc.hasNextDouble()) {
+            System.out.print("Error. Ingrese un número decimal: ");
+            sc.next(); // descarta lo que no es un double
+        }
+        double valor = sc.nextDouble();
+        sc.nextLine();
+        return valor;
+    }
+
 }
