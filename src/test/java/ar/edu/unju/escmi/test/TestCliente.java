@@ -13,7 +13,7 @@ class TestCliente {
 
     @Test
     void testGuardarCliente() {
-        Cliente cliente = new Cliente("Luján", "Cansino", "San Salvador", 45678901, true);
+        Cliente cliente = new Cliente("Luján", "Cansino", "San Salvador", 48678917, true);
         dao.guardarCliente(cliente);
 
         assertNotNull(cliente.getId(), "El ID no debería ser nulo después de guardar");
