@@ -24,6 +24,7 @@ public class ClienteDaoImp implements IClienteDao {
     public void guardarCliente(Cliente cliente) {
         EntityTransaction tx = em.getTransaction();
         try {
+     
             tx.begin();
             em.persist(cliente);
             tx.commit();
