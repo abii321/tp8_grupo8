@@ -6,6 +6,17 @@ import jakarta.persistence.*;
 @Table(name = "detalles_factura")
 public class DetalleFactura {
 
+    public DetalleFactura(Factura factura, Producto producto, int cantidad) {
+    this.factura = factura;
+    this.producto = producto;
+    this.cantidad = cantidad;
+    }
+
+    public DetalleFactura() {
+        // Constructor vacío necesario para pruebas y JPA
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_detalle")

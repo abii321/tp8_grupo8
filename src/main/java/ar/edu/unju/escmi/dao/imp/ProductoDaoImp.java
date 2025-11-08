@@ -2,6 +2,7 @@ package ar.edu.unju.escmi.dao.imp;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import java.util.List;
 import jakarta.persistence.TypedQuery;
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
@@ -97,38 +98,25 @@ public class ProductoDaoImp implements IProductoDao {
         return producto;
     }
 
-    public void eliminacionLogica(String descripcion) {
-    EntityTransaction tx = em.getTransaction();
-    try {
-        tx.begin();
-        TypedQuery<Producto> query = em.createQuery("SELECT p FROM Producto p WHERE p.descripcion = :descripcion", Producto.class);
-        query.setParameter("descripcion", descripcion);
-        Producto producto = query.getSingleResult();
-        if (producto != null) {
-            producto.setEstado(false); 
-            em.merge(producto);
-        }
-        tx.commit();
-    } catch (Exception e) {
-        if (tx.isActive()) {
-            tx.rollback();
-        }
-        e.printStackTrace();
-    } finally {
+    @Override
+    public boolean existeDescripcion(String descripcion) {
+        EntityManager em =EmfSingleton.getInstance().getEmf().createEntityManager();
+        try {
+            List<Producto> productos = em.createQuery("SELECT p FROM Producto p WHERE p.estado = true", Producto.class)
+                .getResultList();
+
+            for (Producto p : productos) {
+                if (p.getDescripcion().equalsIgnoreCase(descripcion)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println("Error al verificar la descripción: " + e.getMessage());
+            return false;
+        } finally {
         em.close();
     }
 }
 
-    public boolean existeDescripcion(String descripcion) {
-        try {
-            Long count = em.createQuery(
-                    "SELECT COUNT(p) FROM Producto p WHERE p.descripcion = :descripcion AND p.estado = true",
-                    Long.class)
-                    .setParameter("descripcion", descripcion)
-                    .getSingleResult();
-            return count > 0;
-        } finally {
-            em.close();
-        }
-    }
 }

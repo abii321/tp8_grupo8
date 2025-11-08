@@ -15,7 +15,7 @@ public class ClienteDaoImp implements IClienteDao {
     // Métodos de la interfaz
     @Override
     public void guardarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getEntityManager();
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
      
@@ -32,7 +32,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public void modificarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getEntityManager();
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -48,7 +48,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public List<Cliente> obtenerClientes() {
-        EntityManager em = EmfSingleton.getEntityManager();
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         List<Cliente> clientes = null;
         try {
             TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c", Cliente.class);
@@ -63,7 +63,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public Cliente buscarPorDni(String dni) {
-        EntityManager em = EmfSingleton.getEntityManager();
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         Cliente cliente = null;
         try {
             TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni AND c.estado = true", Cliente.class);
