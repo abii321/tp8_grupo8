@@ -63,20 +63,20 @@ public class ClienteDaoImp implements IClienteDao {
     }
 
     @Override
-    public Cliente buscarPorDni(String dni) {
-        Cliente cliente = null;
-        try {
-            TypedQuery<Cliente> query = manager.createQuery(
-                "SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class);
-            query.setParameter("dni", Integer.parseInt(dni));
-            cliente = query.getSingleResult();
-        } catch (NoResultException e) {
-            System.out.println("No se encontró cliente con ese DNI");
-        } catch (Exception e) {
-            System.out.println("Error al buscar el cliente: " + e.getMessage());
-        }
-        return cliente;
+public Cliente buscarPorDni(int dni) {
+    Cliente cliente = null;
+    try {
+        TypedQuery<Cliente> query = manager.createQuery(
+            "SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class);
+        query.setParameter("dni", dni);
+        cliente = query.getSingleResult();
+    } catch (NoResultException e) {
+        System.out.println("No se encontró cliente con ese DNI");
+    } catch (Exception e) {
+        System.out.println("Error al buscar el cliente: " + e.getMessage());
     }
+    return cliente;
+}
 
     public void cerrar() {
         if (manager.isOpen()) manager.close();
