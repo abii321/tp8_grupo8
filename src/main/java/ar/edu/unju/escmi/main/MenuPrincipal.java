@@ -42,7 +42,7 @@ public class MenuPrincipal {
             try {
                 switch (opcion) {
                     case 1: {
-                        int dniNuevo = InputUtil.inputInt("Ingrese DNI del cliente:"); 
+                        String dniNuevo = InputUtil.inputInt("Ingrese DNI del cliente:"); 
                         if (clienteDao.buscarPorDni(dniNuevo) != null) {
                             throw new Exception("Ya existe un cliente con ese DNI.");
                         }
@@ -67,7 +67,7 @@ public class MenuPrincipal {
                         break;
                     }
                     case 3: {
-                        int dniFactura = InputUtil.inputInt("Ingrese DNI del cliente:");
+                        String dniFactura = InputUtil.inputString("Ingrese DNI del cliente:");
                         Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
                         if (clienteFactura == null) {
                             System.out.println("Cliente no encontrado.");

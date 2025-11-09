@@ -6,6 +6,7 @@ import ar.edu.unju.escmi.entities.Cliente;
 public interface IClienteDao {
     void guardarCliente(Cliente cliente);
     void modificarCliente(Cliente cliente);
+     void borrarCliente(Cliente cliente);
     List<Cliente> obtenerClientes();
-    Cliente buscarPorDni(int dni);
+    Cliente buscarPorDni(String dni);
 }
