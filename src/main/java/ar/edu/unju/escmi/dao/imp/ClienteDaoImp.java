@@ -2,6 +2,7 @@ package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import ar.edu.unju.escmi.config.EmfSingleton;
@@ -10,54 +11,48 @@ import ar.edu.unju.escmi.entities.Cliente;
 
 public class ClienteDaoImp implements IClienteDao {
 
-    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    private EntityManager manager;
+
+    public ClienteDaoImp() {
+        this.manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    }
 
     @Override
     public void guardarCliente(Cliente cliente) {
+        EntityTransaction tx = manager.getTransaction();
         try {
-            manager.getTransaction().begin();
+            tx.begin();
             manager.persist(cliente);
-            manager.getTransaction().commit();
+            tx.commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) {
-                manager.getTransaction().rollback();
-            }
-            System.out.println("No se pudo guardar el objeto cliente");
-        } finally {
-            if (manager.isOpen()) manager.close();
+            if (tx.isActive()) tx.rollback();
+            System.out.println("No se pudo guardar el objeto cliente: " + e.getMessage());
         }
     }
 
     @Override
     public void modificarCliente(Cliente cliente) {
-        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+        EntityTransaction tx = manager.getTransaction();
         try {
-            manager.getTransaction().begin();
+            tx.begin();
             manager.merge(cliente);
-            manager.getTransaction().commit();
+            tx.commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) {
-                manager.getTransaction().rollback();
-            }
-            System.out.println("No se pudo modificar el objeto cliente");
-        } finally {
-            if (manager.isOpen()) manager.close();
+            if (tx.isActive()) tx.rollback();
+            System.out.println("No se pudo modificar el objeto cliente: " + e.getMessage());
         }
     }
 
     @Override
     public void borrarCliente(Cliente cliente) {
+        EntityTransaction tx = manager.getTransaction();
         try {
-            manager.getTransaction().begin();
+            tx.begin();
             manager.remove(manager.contains(cliente) ? cliente : manager.merge(cliente));
-            manager.getTransaction().commit();
+            tx.commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) {
-                manager.getTransaction().rollback();
-            }
-            System.out.println("No se pudo eliminar el cliente");
-        } finally {
-            if (manager.isOpen()) manager.close();
+            if (tx.isActive()) tx.rollback();
+            System.out.println("No se pudo eliminar el cliente: " + e.getMessage());
         }
     }
 
@@ -71,21 +66,19 @@ public class ClienteDaoImp implements IClienteDao {
     public Cliente buscarPorDni(String dni) {
         Cliente cliente = null;
         try {
-            manager.getTransaction().begin();
-            TypedQuery<Cliente> query = manager.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class);
+            TypedQuery<Cliente> query = manager.createQuery(
+                "SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class);
             query.setParameter("dni", Integer.parseInt(dni));
             cliente = query.getSingleResult();
-            manager.getTransaction().commit();
         } catch (NoResultException e) {
             System.out.println("No se encontró cliente con ese DNI");
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) {
-                manager.getTransaction().rollback();
-            }
             System.out.println("Error al buscar el cliente: " + e.getMessage());
-        } finally {
-            if (manager.isOpen()) manager.close();
         }
         return cliente;
+    }
+
+    public void cerrar() {
+        if (manager.isOpen()) manager.close();
     }
 }
