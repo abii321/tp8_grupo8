@@ -1,135 +1,91 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
-import java.util.Scanner;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.entities.Cliente;
 
 public class ClienteDaoImp implements IClienteDao {
 
-    // Métodos de la interfaz
+    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+
     @Override
     public void guardarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
-            em.persist(cliente);
-            tx.commit();
+            manager.getTransaction().begin();
+            manager.persist(cliente);
+            manager.getTransaction().commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            System.out.println("No se pudo guardar el objeto cliente");
         } finally {
-            if (em.isOpen()) em.close();
+            if (manager.isOpen()) manager.close();
         }
     }
 
     @Override
     public void modificarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
-            tx.begin();
-            em.merge(cliente);
-            tx.commit();
+            manager.getTransaction().begin();
+            manager.merge(cliente);
+            manager.getTransaction().commit();
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            System.out.println("No se pudo modificar el objeto cliente");
         } finally {
-            if (em.isOpen()) em.close();
+            if (manager.isOpen()) manager.close();
+        }
+    }
+
+    @Override
+    public void borrarCliente(Cliente cliente) {
+        try {
+            manager.getTransaction().begin();
+            manager.remove(manager.contains(cliente) ? cliente : manager.merge(cliente));
+            manager.getTransaction().commit();
+        } catch (Exception e) {
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            System.out.println("No se pudo eliminar el cliente");
+        } finally {
+            if (manager.isOpen()) manager.close();
         }
     }
 
     @Override
     public List<Cliente> obtenerClientes() {
-        EntityManager em = EmfSingleton.getEntityManager();
-        List<Cliente> clientes = null;
-        try {
-            TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c", Cliente.class);
-            clientes = query.getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (em.isOpen()) em.close();
-        }
-        return clientes;
+        TypedQuery<Cliente> query = manager.createQuery("SELECT c FROM Cliente c", Cliente.class);
+        return query.getResultList();
     }
 
-    // Métodos extra interactivos
-    public void altaCliente(Scanner sc) {
-        Cliente cliente = new Cliente();
-        System.out.print("Ingrese nombre: ");
-        cliente.setNombre(sc.nextLine());
-        System.out.print("Ingrese apellido: ");
-        cliente.setApellido(sc.nextLine());
-        System.out.print("Ingrese domicilio: ");
-        cliente.setDomicilio(sc.nextLine());
-        System.out.print("Ingrese DNI: ");
-        cliente.setDni(Integer.parseInt(sc.nextLine()));
-        cliente.setEstado(true);
-
-        EntityManager em = EmfSingleton.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
+    @Override
+    public Cliente buscarPorDni(String dni) {
+        Cliente cliente = null;
         try {
-            tx.begin();
-            em.persist(cliente);
-            tx.commit();
-            System.out.println("✅ Cliente guardado correctamente.");
+            manager.getTransaction().begin();
+            TypedQuery<Cliente> query = manager.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class);
+            query.setParameter("dni", Integer.parseInt(dni));
+            cliente = query.getSingleResult();
+            manager.getTransaction().commit();
+        } catch (NoResultException e) {
+            System.out.println("No se encontró cliente con ese DNI");
         } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            System.out.println("❌ Error al guardar cliente.");
-            e.printStackTrace();
+            if (manager.getTransaction().isActive()) {
+                manager.getTransaction().rollback();
+            }
+            System.out.println("Error al buscar el cliente: " + e.getMessage());
         } finally {
-            if (em.isOpen()) em.close();
+            if (manager.isOpen()) manager.close();
         }
-    }
-
-    public void modificarCliente(Scanner sc) {
-        System.out.print("Ingrese ID del cliente a modificar: ");
-        Long id = Long.parseLong(sc.nextLine());
-
-        EntityManager em = EmfSingleton.getEntityManager();
-        Cliente cliente = em.find(Cliente.class, id);
-
-        if (cliente == null) {
-            System.out.println("⚠️ Cliente no encontrado.");
-            em.close();
-            return;
-        }
-
-        System.out.print("Nuevo nombre: ");
-        cliente.setNombre(sc.nextLine());
-        System.out.print("Nuevo apellido: ");
-        cliente.setApellido(sc.nextLine());
-        System.out.print("Nuevo domicilio: ");
-        cliente.setDomicilio(sc.nextLine());
-        System.out.print("Nuevo DNI: ");
-        cliente.setDni(Integer.parseInt(sc.nextLine()));
-
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            em.merge(cliente);
-            tx.commit();
-            System.out.println("✅ Cliente actualizado.");
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            System.out.println("❌ Error al modificar cliente.");
-            e.printStackTrace();
-        } finally {
-            if (em.isOpen()) em.close();
-        }
-    }
-
-    public void mostrarClientes() {
-        EntityManager em = EmfSingleton.getEntityManager();
-        List<Cliente> clientes = em.createQuery("FROM Cliente", Cliente.class).getResultList();
-        clientes.forEach(System.out::println);
-        em.close();
+        return cliente;
     }
 }
