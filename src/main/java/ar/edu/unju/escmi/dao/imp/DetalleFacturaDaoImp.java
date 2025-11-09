@@ -10,10 +10,9 @@ import jakarta.persistence.TypedQuery;
 
 public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
 
-    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-
     @Override
     public void guardarDetalle(DetalleFactura detalle) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             manager.getTransaction().begin();
             manager.persist(detalle);
@@ -29,6 +28,7 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
 
     @Override
     public List<DetalleFactura> obtenerDetalles() {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         TypedQuery<DetalleFactura> query = manager.createQuery(
                 "SELECT d FROM DetalleFactura d", DetalleFactura.class);
         return query.getResultList();

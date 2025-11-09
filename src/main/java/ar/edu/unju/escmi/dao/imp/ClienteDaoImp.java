@@ -30,6 +30,7 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public void modificarCliente(Cliente cliente) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             manager.getTransaction().begin();
             manager.merge(cliente);
