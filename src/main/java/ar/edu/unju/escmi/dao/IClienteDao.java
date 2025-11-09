@@ -8,5 +8,5 @@ public interface IClienteDao {
     void modificarCliente(Cliente cliente);
      void borrarCliente(Cliente cliente);
     List<Cliente> obtenerClientes();
-    Cliente buscarPorDni(String dni);
+    Cliente buscarPorDni(int dni);
 }

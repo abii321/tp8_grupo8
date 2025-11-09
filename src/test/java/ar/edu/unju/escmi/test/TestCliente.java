@@ -36,7 +36,7 @@ class TestCliente {
         dao.guardarCliente(cliente);
 
         // buscar por DNI para confirmar que se guardó en la BD
-        Cliente guardado = dao.buscarPorDni(String.valueOf(cliente.getDni()));
+      Cliente guardado = dao.buscarPorDni(cliente.getDni());
 
         assertNotNull(guardado, "El cliente debería existir en la base de datos");
         assertEquals("Luján", guardado.getNombre());
@@ -50,7 +50,8 @@ class TestCliente {
         cliente.setNombre("Ana María");
         dao.modificarCliente(cliente);
 
-        Cliente modificado = dao.buscarPorDni(String.valueOf(cliente.getDni()));
+        Cliente modificado = dao.buscarPorDni(cliente.getDni());
+
 
         assertNotNull(modificado, "El cliente modificado debería existir en la base");
         assertEquals("Ana María", modificado.getNombre(), "El nombre debería haberse modificado en la BD");
