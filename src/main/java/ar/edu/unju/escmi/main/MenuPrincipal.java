@@ -42,30 +42,42 @@ public class MenuPrincipal {
             try {
                 switch (opcion) {
                     case 1: {
-                       int dniNuevo = InputUtil.inputInt("Ingrese DNI del cliente:");
+                    try {
+                        int dniNuevo = InputUtil.inputInt("Ingrese DNI del cliente:");
+
                         if (clienteDao.buscarPorDni(dniNuevo) != null) {
-                            throw new Exception("Ya existe un cliente con ese DNI.");
+                            System.out.println("Ya existe un cliente con ese DNI.");
+                            break;
                         }
 
                         Cliente nuevoCliente = new Cliente();
                         nuevoCliente.setDni(dniNuevo);
                         nuevoCliente.setNombre(InputUtil.inputString("Ingrese nombre del cliente:"));
+                        nuevoCliente.setApellido(InputUtil.inputString("Ingrese apellido del cliente:"));
                         nuevoCliente.setDomicilio(InputUtil.inputString("Ingrese domicilio del cliente:"));
+
                         clienteDao.guardarCliente(nuevoCliente);
-                        System.out.println("ID asignado: "+nuevoCliente.getId()); 
+
                         System.out.println("Cliente guardado exitosamente.");
-                        break;
+                        System.out.println("ID asignado: " + nuevoCliente.getId());
+
+                    } catch (Exception e) {
+                        System.out.println("Error al guardar el cliente: " + e.getMessage());
                     }
-                    case 2: {
-                        String descNuevo = InputUtil.inputString("Ingrese descripción del producto:");
-                        Producto nuevoProducto = new Producto();
-                        nuevoProducto.setDescripcion(descNuevo);
-                        nuevoProducto.setPrecioUnitario(InputUtil.inputDouble("Ingrese precio unitario:"));
-                        productoDao.guardarProducto(nuevoProducto);
-                        System.out.println("ID asignado: "+nuevoProducto.getId()); 
-                        System.out.println("Producto guardado exitosamente.");
-                        break;
-                    }
+                    break;
+                }
+
+                case 2: {
+                    String descNuevo = InputUtil.inputString("Ingrese descripción del producto:");
+                    Producto nuevoProducto = new Producto();
+                    nuevoProducto.setDescripcion(descNuevo);
+                    nuevoProducto.setPrecioUnitario(InputUtil.inputDouble("Ingrese precio unitario:"));
+                    nuevoProducto.setEstado(true);
+                    productoDao.guardarProducto(nuevoProducto);
+                    System.out.println("ID asignado: "+nuevoProducto.getId()); 
+                    System.out.println("Producto guardado exitosamente.");
+                break;
+                }
                     case 3: {
                         int dniFactura = InputUtil.inputInt("Ingrese DNI del cliente:");
                         Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
