@@ -34,6 +34,7 @@ public class Factura {
 
     // Constructor vacío
     public Factura() {}
+    
 
     // Constructor completo
     public Factura(LocalDate fecha, Cliente cliente, String domicilio, double total, boolean estado) {
