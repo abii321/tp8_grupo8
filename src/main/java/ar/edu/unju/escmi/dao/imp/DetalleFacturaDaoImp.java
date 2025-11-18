@@ -20,7 +20,6 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
         } catch (Exception e) {
             if (manager.getTransaction() != null) manager.getTransaction().rollback();
             System.out.println("No se pudo guardar el detalle de factura.");
-            e.printStackTrace();
         } finally {
             manager.close();
         }

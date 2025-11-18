@@ -12,14 +12,13 @@ import ar.edu.unju.escmi.dao.imp.*;
 import ar.edu.unju.escmi.entities.*;
 
 class TestDetalleFactura {
+    IDetalleFacturaDao detalleDao = new DetalleFacturaDaoImp();
+    IFacturaDao facturaDao = new FacturaDaoImp();
+    IClienteDao clienteDao = new ClienteDaoImp();
+    IProductoDao productoDao = new ProductoDaoImp();
 
     @Test
     void testBuscarDetallePorFactura() {
-        IDetalleFacturaDao detalleDao = new DetalleFacturaDaoImp();
-        IFacturaDao facturaDao = new FacturaDaoImp();
-        IClienteDao clienteDao = new ClienteDaoImp();
-        IProductoDao productoDao = new ProductoDaoImp();
-
         Cliente cliente = new Cliente("Luna", "García", "Yala", 22113344, true);
         clienteDao.guardarCliente(cliente);
 

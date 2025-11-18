@@ -35,7 +35,7 @@ public class ProductoDaoImp implements IProductoDao {
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction() != null)
                 em.getTransaction().rollback();
             System.out.println("Error al borrar el producto: " + e.getMessage());
         } finally {
@@ -74,7 +74,7 @@ public class ProductoDaoImp implements IProductoDao {
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction() != null)
                 em.getTransaction().rollback();
             System.out.println("Error al modificar el precio: " + e.getMessage());
         } finally {
