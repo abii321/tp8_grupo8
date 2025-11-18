@@ -54,8 +54,20 @@ public class ClienteDaoImp implements IClienteDao {
 
     @Override
     public Cliente buscarPorDni(int dni) {
-        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-        return manager.find(Cliente.class, dni);
-    }
+    	EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    	try {
+        	TypedQuery<Cliente> query = manager.createQuery(
+            	"SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class
+        	);
+        	query.setParameter("dni", dni);
+
+        	return query.getSingleResult();
+
+    	} catch (Exception e) {
+	        return null; // o lanzar excepción
+	    } finally {
+        	manager.close();
+    	}
+	}
 
 }
