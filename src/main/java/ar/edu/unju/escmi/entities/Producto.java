@@ -20,7 +20,7 @@ public class Producto {
     @Column(name = "estado", nullable = false)
     private boolean estado;
 
-    // Constructor vacío
+    // Constructor vacío (requerido por JPA)
     public Producto() {}
 
     // Constructor completo
@@ -43,15 +43,13 @@ public class Producto {
     public boolean isEstado() { return estado; }
     public void setEstado(boolean estado) { this.estado = estado; }
 
-    // Métodos alternativos para compatibilidad
-    public void setNombre(String descripcion) { this.descripcion = descripcion; }
-    public void setPrecio(double precioUnitario) { this.precioUnitario = precioUnitario; }
-
     @Override
     public String toString() {
-        return "Producto [id=" + id + 
-               ", descripcion=" + descripcion + 
-               ", precioUnitario=" + precioUnitario + 
-               ", estado=" + estado + "]";
+        return "Producto{" +
+               "id=" + id +
+               ", descripcion='" + descripcion + '\'' +
+               ", precioUnitario=" + precioUnitario +
+               ", estado=" + estado +
+               '}';
     }
 }
