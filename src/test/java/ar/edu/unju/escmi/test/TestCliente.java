@@ -2,33 +2,16 @@ package ar.edu.unju.escmi.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IClienteDao;
 import ar.edu.unju.escmi.dao.imp.ClienteDaoImp;
 import ar.edu.unju.escmi.entities.Cliente;
-import jakarta.persistence.EntityManagerFactory;
 
 
 class TestCliente {
 
-    private IClienteDao dao;
-
-    @BeforeEach
-    void setUp() {
-        dao = new ClienteDaoImp();
-    }
-
-    @AfterAll
-    static void cerrarConexion() {
-        EntityManagerFactory emf = EmfSingleton.getInstance().getEmf();
-        if (emf.isOpen()) {
-            emf.close();
-        }
-    }
+    private IClienteDao dao = new ClienteDaoImp();
 
     @Test
     void testGuardarCliente() {
@@ -36,9 +19,9 @@ class TestCliente {
         dao.guardarCliente(cliente);
 
         // buscar por DNI para confirmar que se guardó en la BD
-      Cliente guardado = dao.buscarPorDni(cliente.getDni());
+        Cliente guardado = dao.buscarPorDni(cliente.getDni());
 
-        assertNotNull(guardado, "El cliente debería existir en la base de datos");
+        assertNotNull(guardado);
         assertEquals("Luján", guardado.getNombre());
     }
 

@@ -15,12 +15,11 @@ import ar.edu.unju.escmi.entities.Cliente;
 import ar.edu.unju.escmi.entities.Factura;
 
 class TestFactura {
+    IFacturaDao facturaDao = new FacturaDaoImp();
+    IClienteDao clienteDao = new ClienteDaoImp();
 
     @Test
     void testBorrarFactura() {
-        IFacturaDao facturaDao = new FacturaDaoImp();
-        IClienteDao clienteDao = new ClienteDaoImp();
-
         Cliente cliente = new Cliente("Mario", "López", "Palpalá", 44332211, true);
         clienteDao.guardarCliente(cliente);
 
