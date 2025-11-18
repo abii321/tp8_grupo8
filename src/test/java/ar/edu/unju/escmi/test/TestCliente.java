@@ -30,19 +30,17 @@ class TestCliente {
         Cliente cliente = new Cliente("Ana", "Gómez", "Jujuy", 12345678, true);
         dao.guardarCliente(cliente);
 
-        cliente.setNombre("Ana María");
-        dao.modificarCliente(cliente);
+        // Recuperar la versión gestionada antes de modificar
+        Cliente clienteBD = dao.buscarPorDni(cliente.getDni());
+        clienteBD.setNombre("Ana María");
 
-        Cliente modificado = dao.buscarPorDni(cliente.getDni());
-
-
-        assertNotNull(modificado, "El cliente modificado debería existir en la base");
-        assertEquals("Ana María", modificado.getNombre(), "El nombre debería haberse modificado en la BD");
+        dao.modificarCliente(clienteBD);
+        assertNotNull(clienteBD, "El cliente modificado debería existir en la base");
+        assertEquals("Ana María", clienteBD.getNombre(), "El nombre debería haberse modificado en la BD");
     }
 
     @Test
     void testObtenerClientes() {
-        assertNotNull(dao.obtenerClientes(), "La lista de clientes no debería ser nula");
-        assertTrue(dao.obtenerClientes().size() >= 0, "Debería devolver una lista (aunque esté vacía)");
+        assertTrue(dao.obtenerClientes().size() > 0);
     }
 }

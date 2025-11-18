@@ -44,13 +44,18 @@ public class ClienteDaoImp implements IClienteDao {
         }
     }
 
-    @Override
-    public List<Cliente> obtenerClientes() {
-        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-        TypedQuery<Cliente> query = (TypedQuery<Cliente>) manager.createQuery("select * from Autor a", Cliente.class);
-		List<Cliente> clientes = query.getResultList();
-        return clientes;
-    }
+	@Override
+	public List<Cliente> obtenerClientes() {
+    	EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    	try {
+        	TypedQuery<Cliente> query =
+            manager.createQuery("SELECT c FROM Cliente c", Cliente.class);
+        	return query.getResultList();
+    	} finally {
+        	manager.close();
+    	}
+	}
+
 
     @Override
     public Cliente buscarPorDni(int dni) {
