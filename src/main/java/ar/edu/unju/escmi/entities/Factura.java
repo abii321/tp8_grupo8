@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
@@ -33,7 +34,9 @@ public class Factura {
     private List<DetalleFactura> detalles;
 
     // Constructor vacío
-    public Factura() {}
+    public Factura() {
+        this.detalles = new ArrayList<>();
+    }
     
 
     // Constructor completo
@@ -43,6 +46,7 @@ public class Factura {
         this.domicilio = domicilio;
         this.total = total;
         this.estado = estado;
+        this.detalles = new ArrayList<>();
     }
 
     // Getters y Setters
@@ -68,12 +72,15 @@ public class Factura {
     public void setDetalles(List<DetalleFactura> detalles) { this.detalles = detalles; }
 
     public double calcularTotal() {
-        double total = 0.0;
+        double totalCalculado = 0.0;
         for (DetalleFactura detalle : detalles) {
-            total += detalle.getSubtotal(); 
+            totalCalculado += detalle.getSubtotal(); 
         }
-        return total;
+        this.total = totalCalculado; 
+    return totalCalculado;
     }
+
+
 
     @Override
     public String toString() {
