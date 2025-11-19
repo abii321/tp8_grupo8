@@ -35,7 +35,7 @@ class TestDetalleFactura {
         detalle.setSubtotal(producto.getPrecioUnitario());
         detalleDao.guardarDetalle(detalle);
 
-        List<DetalleFactura> detallesFactura = detalleDao.obtenerDetalles();
+        List<DetalleFactura> detallesFactura = detalleDao.obtenerDetallesPorFactura(factura.getId());
         DetalleFactura detalleBuscado = detallesFactura.get(detallesFactura.size() - 1); // último insertado
 
         assertNotNull(detallesFactura);

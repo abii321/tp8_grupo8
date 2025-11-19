@@ -29,19 +29,6 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
     }
 
     @Override
-    public List<DetalleFactura> obtenerDetalles() {
-        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-
-        try {
-            TypedQuery<DetalleFactura> query =
-                manager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class);
-            return query.getResultList();
-        } finally {
-            manager.close();
-        }
-    }
-
-    @Override
     public List<DetalleFactura> obtenerDetallesPorFactura(Long idFactura) {
         EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
