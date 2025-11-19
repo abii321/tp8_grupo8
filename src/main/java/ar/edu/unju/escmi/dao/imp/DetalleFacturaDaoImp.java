@@ -32,7 +32,7 @@ public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
     public List<DetalleFactura> obtenerDetalles() {
         EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
 
-      try {
+        try {
             TypedQuery<DetalleFactura> query =
                 manager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class);
             return query.getResultList();

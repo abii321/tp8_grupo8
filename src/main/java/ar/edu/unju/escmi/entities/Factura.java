@@ -30,8 +30,8 @@ public class Factura {
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleFactura> detalles = new ArrayList<>();
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<DetalleFactura> detalles;
 
     // Constructor vacío
     public Factura() {
@@ -104,8 +104,6 @@ public class Factura {
         this.total = totalCalculado;
         return totalCalculado;
     }
-
-
 
     @Override
     public String toString() {
