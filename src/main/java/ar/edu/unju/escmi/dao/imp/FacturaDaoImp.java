@@ -13,18 +13,19 @@ public class FacturaDaoImp implements IFacturaDao {
     @Override
     public void guardarFactura(Factura factura) {
         EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-        try {
-            manager.getTransaction().begin();
-            manager.persist(factura);
-            manager.getTransaction().commit();
-        } catch (Exception e) {
-            if (manager.getTransaction()!=null) manager.getTransaction().rollback();
-            System.out.println("No se pudo guardar la factura.");
+            try {
+                manager.getTransaction().begin();
+                manager.persist(factura);
+                manager.getTransaction().commit();
+            } catch (Exception e) {
+                if (manager.getTransaction().isActive())
+                    manager.getTransaction().rollback();
+                throw e;
+            } finally {
+                manager.close();
+            }
         }
-        finally {
-            manager.close();
-        }
-    }
+
 
     @Override
     public void borrarFactura(Factura factura) {
