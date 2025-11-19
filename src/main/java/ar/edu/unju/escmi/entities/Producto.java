@@ -3,6 +3,7 @@ package ar.edu.unju.escmi.entities;
 import jakarta.persistence.*;
 
 @Entity
+
 @Table(name = "productos")
 public class Producto {
 
