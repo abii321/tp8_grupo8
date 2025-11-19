@@ -26,7 +26,7 @@ public class FacturaDaoImp implements IFacturaDao {
         } finally {
             manager.close();
         }
-
+    }
 
     @Override
     public void borrarFactura(Factura factura) {
