@@ -6,17 +6,6 @@ import jakarta.persistence.*;
 @Table(name = "detalles_factura")
 public class DetalleFactura {
 
-    public DetalleFactura(Factura factura, Producto producto, int cantidad) {
-    this.factura = factura;
-    this.producto = producto;
-    this.cantidad = cantidad;
-    }
-
-    public DetalleFactura() {
-        // Constructor vacío necesario para pruebas y JPA
-    }
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_detalle")
@@ -28,15 +17,23 @@ public class DetalleFactura {
     @Column(name = "subtotal", nullable = false)
     private double subtotal;
 
-    // Relación con Factura
     @ManyToOne
     @JoinColumn(name = "id_factura", nullable = false)
     private Factura factura;
 
-    // Relación con Producto
     @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
+
+    public DetalleFactura() {}
+
+    // Constructor de conveniencia (si querés usarlo)
+    public DetalleFactura(Factura factura, Producto producto, int cantidad) {
+        this.factura = factura;
+        this.producto = producto;
+        this.cantidad = cantidad;
+        this.subtotal = (producto != null ? producto.getPrecioUnitario() * cantidad : 0.0);
+    }
 
     // Getters y Setters
     public Long getId() { return id; }
@@ -58,9 +55,9 @@ public class DetalleFactura {
     public String toString() {
         return "DetalleFactura{" +
                 "id=" + id +
+                ", producto=" + (producto != null ? producto.getDescripcion() : "null") +
                 ", cantidad=" + cantidad +
                 ", subtotal=" + subtotal +
-                ", producto=" + (producto != null ? producto.getDescripcion() : "null") +
                 '}';
     }
 }

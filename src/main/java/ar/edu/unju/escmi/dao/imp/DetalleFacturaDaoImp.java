@@ -10,53 +10,49 @@ import jakarta.persistence.TypedQuery;
 
 public class DetalleFacturaDaoImp implements IDetalleFacturaDao {
 
-    private static EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
-
     @Override
     public void guardarDetalle(DetalleFactura detalle) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+
         try {
             manager.getTransaction().begin();
             manager.persist(detalle);
             manager.getTransaction().commit();
         } catch (Exception e) {
-            if (manager.getTransaction().isActive()) manager.getTransaction().rollback();
-            System.out.println("❌ No se pudo guardar el detalle de factura.");
-            e.printStackTrace();
-        } finally {
             if (manager.getTransaction().isActive()) {
                 manager.getTransaction().rollback();
             }
+            System.out.println("No se pudo guardar el detalle de la factura.");
+        } finally {
+            manager.close();
         }
     }
 
     @Override
     public List<DetalleFactura> obtenerDetalles() {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+
         try {
             TypedQuery<DetalleFactura> query =
                 manager.createQuery("SELECT d FROM DetalleFactura d", DetalleFactura.class);
             return query.getResultList();
-        } catch (Exception e) {
-            System.out.println("❌ Error al obtener los detalles de factura.");
-            e.printStackTrace();
-            return null;
         } finally {
-            // No se cierra el manager porque es estático
+            manager.close();
         }
     }
 
     @Override
     public List<DetalleFactura> obtenerDetallesPorFactura(Long idFactura) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+
         try {
             TypedQuery<DetalleFactura> query = manager.createQuery(
-                "SELECT d FROM DetalleFactura d WHERE d.factura.id = :idFactura", DetalleFactura.class);
+                    "SELECT d FROM DetalleFactura d WHERE d.factura.id = :idFactura",
+                    DetalleFactura.class);
             query.setParameter("idFactura", idFactura);
             return query.getResultList();
-        } catch (Exception e) {
-            System.out.println("❌ Error al obtener detalles por factura.");
-            e.printStackTrace();
-            return null;
         } finally {
-            // No cerrar el manager
+            manager.close();
         }
     }
 }

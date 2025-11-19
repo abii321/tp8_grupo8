@@ -1,5 +1,8 @@
 package ar.edu.unju.escmi.main;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import ar.edu.unju.escmi.dao.imp.ClienteDaoImp;
 import ar.edu.unju.escmi.dao.imp.ProductoDaoImp;
 import ar.edu.unju.escmi.dao.imp.FacturaDaoImp;
@@ -7,9 +10,6 @@ import ar.edu.unju.escmi.entities.Cliente;
 import ar.edu.unju.escmi.entities.Producto;
 import ar.edu.unju.escmi.entities.Factura;
 import ar.edu.unju.escmi.utils.InputUtil;
-import ar.edu.unju.escmi.entities.DetalleFactura;
-
-import java.util.List;
 
 public class MenuPrincipal {
 
@@ -18,7 +18,7 @@ public class MenuPrincipal {
         ProductoDaoImp productoDao = new ProductoDaoImp();
         FacturaDaoImp facturaDao = new FacturaDaoImp();
 
-        int opcion;
+        int opcion = -1;
 
         do {
             System.out.println("\n=== MENÚ PRINCIPAL ===");
@@ -30,84 +30,94 @@ public class MenuPrincipal {
             System.out.println("6 - Eliminar un producto (eliminación lógica)");
             System.out.println("7 - Modificar datos de cliente");
             System.out.println("8 - Modificar precio de producto");
-            System.out.println("9 - Eliminar producto (eliminación lógica)");
-            System.out.println("10 - Mostrar todas las facturas");
-            System.out.println("11 - Mostrar todos los clientes");
-            System.out.println("12 - Mostrar las facturas que superen $500.000");
+            System.out.println("9 - Mostrar todas las facturas");
+            System.out.println("10 - Mostrar todos los clientes");
+            System.out.println("11 - Mostrar las facturas que superen $500.000");
             System.out.println("0 - Salir");
 
             opcion = InputUtil.inputInt("Seleccione una opción:");
 
             try {
                 switch (opcion) {
-                    case 1:
-                        String dniNuevo = InputUtil.inputString("Ingrese DNI del cliente:");
+                    case 1: {
+                        int dniNuevo = InputUtil.inputInt("Ingrese DNI del cliente:");
+
                         if (clienteDao.buscarPorDni(dniNuevo) != null) {
-                            throw new Exception("Ya existe un cliente con ese DNI.");
+                            System.out.println("Ya existe un cliente con ese DNI.");
+                            break;
                         }
 
                         Cliente nuevoCliente = new Cliente();
-                        nuevoCliente.setDni(Integer.parseInt(dniNuevo));
+                        nuevoCliente.setDni(dniNuevo);
                         nuevoCliente.setNombre(InputUtil.inputString("Ingrese nombre del cliente:"));
+                        nuevoCliente.setApellido(InputUtil.inputString("Ingrese apellido del cliente:"));
                         nuevoCliente.setDomicilio(InputUtil.inputString("Ingrese domicilio del cliente:"));
+
                         clienteDao.guardarCliente(nuevoCliente);
+
                         System.out.println("Cliente guardado exitosamente.");
+                        System.out.println("ID asignado: " + nuevoCliente.getId());
                         break;
+                    }
 
-                    case 2:
+                    case 2: {
                         String descNuevo = InputUtil.inputString("Ingrese descripción del producto:");
-                        if (productoDao.existeDescripcion(descNuevo)) {
-                            throw new Exception("Ya existe un producto con esa descripción.");
-                        }
-
                         Producto nuevoProducto = new Producto();
                         nuevoProducto.setDescripcion(descNuevo);
                         nuevoProducto.setPrecioUnitario(InputUtil.inputDouble("Ingrese precio unitario:"));
+                        nuevoProducto.setEstado(true);
                         productoDao.guardarProducto(nuevoProducto);
+                        System.out.println("ID asignado: " + nuevoProducto.getId());
                         System.out.println("Producto guardado exitosamente.");
                         break;
-
-                    case 3: {
-                    String dniFactura = InputUtil.inputString("Ingrese DNI del cliente:");
-                    Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
-                    if (clienteFactura == null) {
-                        System.out.println("Cliente no encontrado.");
-                        break;
-                        }
-
-                    Factura factura = new Factura();
-                    factura.setCliente(clienteFactura);
-
-                String respuesta = "";
-                do { 
-                    Long idProd = InputUtil.inputLong("Ingrese ID del producto:");
-                    Producto producto = productoDao.buscarPorId(idProd);
-
-                    if (producto == null || !producto.isEstado()) {
-                        System.out.println("El producto no existe o está inactivo.");
-                        continue;
-                }
-
-                    int cantidad = InputUtil.inputInt("Ingrese cantidad:");
-                    factura.agregarDetalle(producto, cantidad);
-
-                    respuesta = InputUtil.inputString("¿Desea agregar otro producto? (si/no):");
-                } while (respuesta.equalsIgnoreCase("si"));
-
-
-                    if (factura.getDetalles() != null && !factura.getDetalles().isEmpty()) {
-                        factura.calcularTotal(); 
-                        facturaDao.guardarFactura(factura);
-                        System.out.println("✅ Factura registrada exitosamente.");
-                    } else {
-                        System.out.println("⚠️ Compra no realizada.");
                     }
 
-                    break;
-                }
+                    case 3: {
+                        int dniFactura = InputUtil.inputInt("Ingrese DNI del cliente:");
+                        Cliente clienteFactura = clienteDao.buscarPorDni(dniFactura);
+                        if (clienteFactura == null) {
+                            System.out.println("Cliente no encontrado.");
+                            break;
+                        }
 
+                        Factura factura = new Factura();
+                        factura.setCliente(clienteFactura);
 
-                    case 4:
+                        String respuesta;
+                        do {
+                            Long idProd = InputUtil.inputLong("Ingrese ID del producto:");
+                            Producto producto = productoDao.buscarPorId(idProd);
+
+                            if (producto == null || !producto.isEstado()) {
+                                System.out.println("El producto no existe o está inactivo.");
+                            } else {
+                                int cantidad = InputUtil.inputInt("Ingrese cantidad:");
+                                factura.agregarDetalle(producto, cantidad);
+                            }
+
+                            respuesta = InputUtil.inputString("¿Desea agregar otro producto? (si/no):");
+                        } while (respuesta.equalsIgnoreCase("si"));
+
+                        if (factura.getDetalles() != null && !factura.getDetalles().isEmpty()) {
+                            factura.setFecha(LocalDate.now());
+                            factura.calcularTotal();
+                            factura.setDomicilio(clienteFactura.getDomicilio());
+                            factura.setEstado(true);
+
+                            try {
+                                facturaDao.guardarFactura(factura);
+                                System.out.println("Factura registrada exitosamente. Total: " + factura.getTotal());
+                                System.out.println("ID factura: " + factura.getId());
+                            } catch (Exception e) {
+                                System.out.println("No se pudo guardar la factura: " + e.getMessage());
+                            }
+                        } else {
+                            System.out.println("Compra no realizada.");
+                        }
+                        break;
+                    }
+
+                    case 4: {
                         int numeroFactura = InputUtil.inputInt("Ingrese número de factura a buscar:");
                         Factura f = facturaDao.obtenerFacturaPorId((long) numeroFactura);
                         if (f != null) {
@@ -116,21 +126,22 @@ public class MenuPrincipal {
                             System.out.println("Factura no encontrada.");
                         }
                         break;
-
-                    case 5:
-                    int numFacturaEliminar = InputUtil.inputInt("Ingrese número de factura a eliminar:");
-                    Factura facturaEliminar = facturaDao.obtenerFacturaPorId((long) numFacturaEliminar);
-
-                    if (facturaEliminar != null && facturaEliminar.isEstado()) {
-                        facturaDao.borrarFactura(facturaEliminar);
-                        System.out.println("Factura eliminada lógicamente.");
-                    } else {
-                        System.out.println("Factura no encontrada o ya está inactiva.");
                     }
-                    break;
 
-                    case 6:
-                    case 9:
+                    case 5: {
+                        int numFacturaEliminar = InputUtil.inputInt("Ingrese número de factura a eliminar:");
+                        Factura facturaEliminar = facturaDao.obtenerFacturaPorId((long) numFacturaEliminar);
+
+                        if (facturaEliminar != null && facturaEliminar.isEstado()) {
+                            facturaDao.borrarFactura(facturaEliminar);
+                            System.out.println("Factura eliminada lógicamente.");
+                        } else {
+                            System.out.println("Factura no encontrada o ya está inactiva.");
+                        }
+                        break;
+                    }
+
+                    case 6: {
                         Long idProdEliminar = InputUtil.inputLong("Ingrese ID del producto a eliminar:");
                         Producto productoAEliminar = productoDao.buscarPorId(idProdEliminar);
 
@@ -139,11 +150,11 @@ public class MenuPrincipal {
                         } else {
                             System.out.println("Producto no encontrado o ya está inactivo.");
                         }
-                    break;
+                        break;
+                    }
 
-
-                    case 7:
-                        String dniModificar = InputUtil.inputString("Ingrese DNI del cliente a modificar:");
+                    case 7: {
+                        int dniModificar = InputUtil.inputInt("Ingrese DNI del cliente a modificar:");
                         Cliente clienteMod = clienteDao.buscarPorDni(dniModificar);
                         if (clienteMod != null) {
                             clienteMod.setNombre(InputUtil.inputString("Nuevo nombre:"));
@@ -151,11 +162,12 @@ public class MenuPrincipal {
                             clienteDao.modificarCliente(clienteMod);
                             System.out.println("Cliente modificado.");
                         } else {
-                            throw new Exception("Cliente no encontrado.");
+                            System.out.println("Cliente no encontrado.");
                         }
                         break;
+                    }
 
-                    case 8:
+                    case 8: {
                         Long idProdModificar = InputUtil.inputLong("Ingrese ID del producto a modificar:");
                         Producto prodMod = productoDao.buscarPorId(idProdModificar);
                         if (prodMod != null && prodMod.isEstado()) {
@@ -163,24 +175,28 @@ public class MenuPrincipal {
                             productoDao.modificarPrecio(idProdModificar, nuevoPrecio);
                             System.out.println("Producto modificado.");
                         } else {
-                            throw new Exception("Producto no encontrado o está inactivo.");
+                            System.out.println("Producto no encontrado o está inactivo.");
                         }
                         break;
+                    }
 
-                    case 10:
+                    case 9: {
                         List<Factura> facturas = facturaDao.obtenerFacturas();
                         facturas.forEach(System.out::println);
                         break;
+                    }
 
-                    case 11:
+                    case 10: {
                         List<Cliente> clientes = clienteDao.obtenerClientes();
                         clientes.forEach(System.out::println);
                         break;
+                    }
 
-                    case 12:
+                    case 11: {
                         List<Factura> facturasAltas = facturaDao.obtenerFacturasConMontoMayorA(500000);
                         facturasAltas.forEach(System.out::println);
                         break;
+                    }
 
                     case 0:
                         System.out.println("¡Hasta luego!");

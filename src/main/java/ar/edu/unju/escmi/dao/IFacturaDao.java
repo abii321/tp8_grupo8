@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.dao;
 
 import java.util.List;
+
 import ar.edu.unju.escmi.entities.Factura;
 
 public interface IFacturaDao {
@@ -9,7 +10,4 @@ public interface IFacturaDao {
     Factura obtenerFacturaPorId(Long idFactura);
     List<Factura> obtenerFacturas();
     List<Factura> obtenerFacturasConMontoMayorA(double monto);
-
-    // 🔽 Agregar esta línea para que el método exista en la interfaz
-    void modificarFactura(Factura factura);
 }

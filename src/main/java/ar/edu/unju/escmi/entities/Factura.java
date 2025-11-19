@@ -1,6 +1,7 @@
 package ar.edu.unju.escmi.entities;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
@@ -30,10 +31,14 @@ public class Factura {
     private Cliente cliente;
 
     @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DetalleFactura> detalles;
+    private List<DetalleFactura> detalles = new ArrayList<>();
 
     // Constructor vacío
-    public Factura() {}
+    public Factura() {
+        this.detalles = new ArrayList<>();
+        this.total = 0.0;
+        this.fecha = LocalDate.now();
+    }
 
     // Constructor completo
     public Factura(LocalDate fecha, Cliente cliente, String domicilio, double total, boolean estado) {
@@ -42,6 +47,7 @@ public class Factura {
         this.domicilio = domicilio;
         this.total = total;
         this.estado = estado;
+        this.detalles = new ArrayList<>();
     }
 
     // Getters y Setters
@@ -64,14 +70,39 @@ public class Factura {
     public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
     public List<DetalleFactura> getDetalles() { return detalles; }
-    public void setDetalles(List<DetalleFactura> detalles) { this.detalles = detalles; }
-
-    public double calcularTotal() {
-        double total = 0.0;
-        for (DetalleFactura detalle : detalles) {
-            total += detalle.getSubtotal(); 
+    public void setDetalles(List<DetalleFactura> detalles) {
+        this.detalles = detalles;
+        // asegurarse que cada detalle apunta a esta factura
+        if (this.detalles != null) {
+            this.detalles.forEach(d -> d.setFactura(this));
         }
-        return total;
+    }
+
+    /**
+     * Crea un detalle y lo agrega a la factura (setea subtotal y referencia).
+     * NO persiste aquí; la persistencia se realiza cuando se persiste la factura (cascade).
+     */
+    public void agregarDetalle(Producto producto, int cantidad) {
+        DetalleFactura detalle = new DetalleFactura();
+        detalle.setProducto(producto);
+        detalle.setCantidad(cantidad);
+        detalle.setSubtotal(producto.getPrecioUnitario() * cantidad);
+        detalle.setFactura(this); // referencia necesaria para JPA
+        this.detalles.add(detalle);
+    }
+
+    /**
+     * Recalcula el total sumando subtotales de los detalles.
+     */
+    public double calcularTotal() {
+        double totalCalculado = 0.0;
+        if (this.detalles != null) {
+            for (DetalleFactura detalle : detalles) {
+                totalCalculado += detalle.getSubtotal();
+            }
+        }
+        this.total = totalCalculado;
+        return totalCalculado;
     }
 
     @Override
@@ -83,12 +114,7 @@ public class Factura {
                 ", domicilio='" + domicilio + '\'' +
                 ", estado=" + estado +
                 ", cliente=" + (cliente != null ? cliente.getNombre() : "null") +
+                ", detalles=" + (detalles != null ? detalles.size() : 0) +
                 '}';
     }
-
-    public void agregarDetalle(Producto producto, int cantidad) {
-    DetalleFactura detalle = new DetalleFactura(this, producto, cantidad);
-    this.detalles.add(detalle);
-}
-
 }
