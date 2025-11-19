@@ -37,7 +37,6 @@ public class InputUtil {
     }
     public static String inputString(String message) {
         System.out.print(message);
-        sc.nextLine(); // limpiar buffer
         return sc.nextLine();
     }
 

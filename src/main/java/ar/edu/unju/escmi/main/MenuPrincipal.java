@@ -13,6 +13,7 @@ import ar.edu.unju.escmi.utils.InputUtil;
 
 public class MenuPrincipal {
 
+    Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
         ClienteDaoImp clienteDao = new ClienteDaoImp();
         ProductoDaoImp productoDao = new ProductoDaoImp();

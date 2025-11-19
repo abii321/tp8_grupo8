@@ -2,8 +2,6 @@ package ar.edu.unju.escmi.dao.imp;
 
 import java.util.List;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import ar.edu.unju.escmi.config.EmfSingleton;
@@ -12,71 +10,69 @@ import ar.edu.unju.escmi.entities.Cliente;
 
 public class ClienteDaoImp implements IClienteDao {
 
-    // Métodos de la interfaz
-    @Override
-    public void guardarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        try {
-     
-            tx.begin();
-            em.persist(cliente);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (em.isOpen()) em.close();
+	@Override
+	public void guardarCliente(Cliente cliente) {
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+		try {
+			manager.getTransaction().begin();
+			manager.persist(cliente);
+			manager.getTransaction().commit();
+		}catch(Exception e) {
+			if(manager.getTransaction() != null) {
+				manager.getTransaction().rollback();
+			}
+			System.out.println("No se pudo guardar el objeto cliente");
+		}finally {
+			manager.close();
         }
-    }
+	}
 
     @Override
     public void modificarCliente(Cliente cliente) {
-        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
-        EntityTransaction tx = em.getTransaction();
+        EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
-            tx.begin();
-            em.merge(cliente);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (em.isOpen()) em.close();
+			manager.getTransaction().begin();
+			manager.merge(cliente);
+			manager.getTransaction().commit();
+		}catch(Exception e) {
+			if(manager.getTransaction() != null) {
+				manager.getTransaction().rollback();
+			}
+			System.out.println("No se pudo modificar el cliente");
+		}finally {
+			manager.close();
         }
     }
 
-    @Override
-    public List<Cliente> obtenerClientes() {
-        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
-        List<Cliente> clientes = null;
-        try {
-            TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c", Cliente.class);
-            clientes = query.getResultList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (em.isOpen()) em.close();
-        }
-        return clientes;
-    }
+	@Override
+	public List<Cliente> obtenerClientes() {
+    	EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    	try {
+        	TypedQuery<Cliente> query =
+            manager.createQuery("SELECT c FROM Cliente c", Cliente.class);
+        	return query.getResultList();
+    	} finally {
+        	manager.close();
+    	}
+	}
+
 
     @Override
-    public Cliente buscarPorDni(String dni) {
-        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
-        Cliente cliente = null;
-        try {
-            TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.dni = :dni AND c.estado = true", Cliente.class);
-            query.setParameter("dni", dni);
-            cliente = query.getSingleResult();
-        } catch (NoResultException e) {
-            System.out.println("No se encontró un cliente con ese DNI.");
-        } catch (Exception e) {
-            System.out.println("Error al buscar el cliente: " + e.getMessage());
-        } finally {
-            em.close();
-        }
-        return cliente;
-    }
+    public Cliente buscarPorDni(int dni) {
+    	EntityManager manager = EmfSingleton.getInstance().getEmf().createEntityManager();
+    	try {
+        	TypedQuery<Cliente> query = manager.createQuery(
+            	"SELECT c FROM Cliente c WHERE c.dni = :dni", Cliente.class
+        	);
+        	query.setParameter("dni", dni);
+
+        	return query.getSingleResult();
+
+    	} catch (Exception e) {
+	        return null; // o lanzar excepción
+	    } finally {
+        	manager.close();
+    	}
+	}
 
 }

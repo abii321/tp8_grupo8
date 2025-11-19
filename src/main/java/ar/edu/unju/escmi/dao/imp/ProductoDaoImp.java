@@ -1,27 +1,23 @@
 package ar.edu.unju.escmi.dao.imp;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import java.util.List;
-import jakarta.persistence.TypedQuery;
 import ar.edu.unju.escmi.config.EmfSingleton;
 import ar.edu.unju.escmi.dao.IProductoDao;
 import ar.edu.unju.escmi.entities.Producto;
 
 public class ProductoDaoImp implements IProductoDao {
-    private static EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
+    
     @Override
-    public void guardarProducto(Producto producto) {
-        
+    public void guardarProducto(Producto producto) {    
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             em.persist(producto);
             em.getTransaction().commit();
-            System.out.println("✅ Producto guardado correctamente.");
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction() != null)
                 em.getTransaction().rollback();
-            System.out.println("❌ Error al guardar el producto: " + e.getMessage());
+            System.out.println("Error al guardar el producto: " + e.getMessage());
         } finally {
             em.close();
         }
@@ -29,19 +25,19 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public void borrarProducto(Producto producto) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             Producto prod = em.find(Producto.class, producto.getId());
             if (prod != null) {
                 prod.setEstado(false);
                 em.merge(prod);
-                System.out.println("✅ Producto eliminado lógicamente.");
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction() != null)
                 em.getTransaction().rollback();
-            System.out.println("❌ Error al borrar el producto: " + e.getMessage());
+            System.out.println("Error al borrar el producto: " + e.getMessage());
         } finally {
             em.close();
         }
@@ -49,6 +45,7 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public double obtenerPrecioPorId(Long idProd) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         double precio = 0;
         try {
             Producto producto = em.find(Producto.class, idProd);
@@ -56,7 +53,7 @@ public class ProductoDaoImp implements IProductoDao {
                 precio = producto.getPrecioUnitario();
             }
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener el precio: " + e.getMessage());
+            System.out.println(" Error al obtener el precio: " + e.getMessage());
         } finally {
             em.close();
         }
@@ -65,21 +62,21 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public void modificarPrecio(Long idProd, double nuevoPrecio) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         try {
             em.getTransaction().begin();
             Producto producto = em.find(Producto.class, idProd);
             if (producto != null && producto.isEstado()) {
                 producto.setPrecioUnitario(nuevoPrecio);
                 em.merge(producto);
-                System.out.println("✅ Precio actualizado correctamente.");
             } else {
-                System.out.println("⚠️ Producto no encontrado o inactivo.");
+                System.out.println("Producto no encontrado o inactivo.");
             }
             em.getTransaction().commit();
         } catch (Exception e) {
-            if (em.getTransaction().isActive())
+            if (em.getTransaction() != null)
                 em.getTransaction().rollback();
-            System.out.println("❌ Error al modificar el precio: " + e.getMessage());
+            System.out.println("Error al modificar el precio: " + e.getMessage());
         } finally {
             em.close();
         }
@@ -87,36 +84,17 @@ public class ProductoDaoImp implements IProductoDao {
 
     @Override
     public Producto buscarPorId(Long id) {
+        EntityManager em = EmfSingleton.getInstance().getEmf().createEntityManager();
         Producto producto = null;
         try {
             producto = em.find(Producto.class, id);
         } catch (Exception e) {
-            System.out.println("❌ Error al buscar el producto: " + e.getMessage());
+            System.out.println("Error al buscar el producto: " + e.getMessage());
         } finally {
             em.close();
         }
         return producto;
     }
-
-    @Override
-    public boolean existeDescripcion(String descripcion) {
-        EntityManager em =EmfSingleton.getInstance().getEmf().createEntityManager();
-        try {
-            List<Producto> productos = em.createQuery("SELECT p FROM Producto p WHERE p.estado = true", Producto.class)
-                .getResultList();
-
-            for (Producto p : productos) {
-                if (p.getDescripcion().equalsIgnoreCase(descripcion)) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (Exception e) {
-            System.out.println("Error al verificar la descripción: " + e.getMessage());
-            return false;
-        } finally {
-        em.close();
-    }
-}
+    
 
 }
